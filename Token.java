@@ -1,2 +1,6 @@
-package PACKAGE_NAME;public class Token {
+public class Token {
+    String value;
+    public Token(String value) {
+        this.value = value;
+    }
 }

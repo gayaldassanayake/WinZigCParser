@@ -1,12 +1,13 @@
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws Exception {
         String arg = Validator.validateArgs(args);
         if(Validator.help(arg) != 0) {
             return;
         }
         String program = ProgramReader.readProgram(arg);
-        Token[] tokens = LexicalAnalyzer.scan(program);
+        ArrayList<Token> tokens = LexicalAnalyzer.scan(program);
     }
 }

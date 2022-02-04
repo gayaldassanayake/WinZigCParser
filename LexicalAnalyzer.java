@@ -12,10 +12,14 @@ public class LexicalAnalyzer {
     }
 
     private static boolean isPredefinedToken() {
-        // TODO: complete the logic
-        int initialPointer = readPointer;
-
-        readPointer = initialPointer;
+        ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
+        for (String token: predefinedTokens) {
+             int tokenSize = token.length();
+             if(readPointer+tokenSize<=program.size() &&
+                     program.subList(readPointer, readPointer+tokenSize).toString().equals(token)) {
+                 return true;
+             }
+        }
         return false;
     }
 
@@ -100,8 +104,23 @@ public class LexicalAnalyzer {
         tokens.add(new Token(program.subList(startIndex, endIndex).toString(), TokenType.INTEGER));
     }
 
+    private static void readPredefinedToken() {
+        ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
+        for (String token: predefinedTokens) {
+            int tokenSize = token.length();
+            if(readPointer+tokenSize<=program.size() &&
+                    program.subList(readPointer, readPointer+tokenSize).toString().equals(token)) {
+                tokens.add(new Token(token, TokenType.PREDEFINED));
+                readPointer+=tokenSize;
+                break;
+            }
+        }
+    }
+
     public static ArrayList<Token> scan(String programStr) throws Exception {
         // TODO: handle readPointer exceeding the program size with proper error
+        // TODO: remove /n from whitespaces and add to predefined tokens.
+        // TODO: check if an entire program is tokenized correctly.
         convertProgramToCharList(programStr);
         while (readPointer<program.size()) {
             Character ch = program.get(readPointer);
@@ -118,13 +137,15 @@ public class LexicalAnalyzer {
             } else if(isInteger(ch)) {
                 readInteger();
             } else {
-                if(isPredefinedToken()) {}
-                else if(isIdentifierHead(ch)) {
+                if(isPredefinedToken()) {
+                    readPredefinedToken();
+                } else if(isIdentifierHead(ch)) {
                     readIdentifier();
-                }
-                readPointer++;
-                System.out.println("Ignore");
+                } else {
+                    System.out.println("Ignore: " + program.get(readPointer));
+                    readPointer++;
 //              throw new Exception("Invalid token found during scanning");
+                }
             }
         }
         // Break the program into tokens.

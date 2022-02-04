@@ -37,6 +37,10 @@ public class Token {
         }
     }
 
+    public static ArrayList<String> getPredefinedTokens() {
+        return predefinedTokens;
+    }
+
     public Token(String value, TokenType type) {
         this.value = value;
         this.type = type;

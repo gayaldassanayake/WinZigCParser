@@ -8,8 +8,10 @@ public class Validator {
 
     public static int help(String arg) {
         if(arg.equals("--help") || arg.equals("-h")) {
-            // TODO: complete the help command
-            System.out.println("Help command");
+            System.out.println("WinZigC lexical analyzer and parser:");
+            System.out.println("    -h [--help] show help message");
+            System.out.println("Example execution:");
+            System.out.println("    java winzigc –ast winzig_test_programs /winzig_02 > tree.02");
             return -1;
         }
         return 0;

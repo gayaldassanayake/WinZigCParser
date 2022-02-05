@@ -41,7 +41,7 @@ public class LexicalAnalyzer {
     private static void readSingleLineComment() {
         int startIndex = readPointer;
         // loop while the character is not a line break.
-        while(readPointer<program.length() && Util.GetCharFromString(program, readPointer).matches(".")) {
+        while(readPointer<program.length() && Util.getCharFromString(program, readPointer).matches(".")) {
             readPointer++;
         }
         int endIndex = readPointer;

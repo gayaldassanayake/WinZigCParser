@@ -1,6 +1,8 @@
+package com.cs4542.compiler.util;
+
 import java.util.ArrayList;
 
-public class Utils {
+public class Util {
     public static String ConvertCharListToString(ArrayList<Character> charList) {
         StringBuilder builder = new StringBuilder(charList.size());
         for(Character ch: charList) {

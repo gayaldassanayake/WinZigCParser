@@ -24,3 +24,6 @@ hs_err_pid*
 
 # IDE config
 .idea/
+
+# output files
+lex-tokens.txt

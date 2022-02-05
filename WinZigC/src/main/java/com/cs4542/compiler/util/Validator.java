@@ -1,3 +1,5 @@
+package com.cs4542.compiler.util;
+
 public class Validator {
     public static String validateArgs(String[] args) throws IllegalArgumentException {
         if(args.length!=1) {

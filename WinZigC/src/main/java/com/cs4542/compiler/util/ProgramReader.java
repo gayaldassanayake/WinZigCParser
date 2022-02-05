@@ -1,3 +1,5 @@
+package com.cs4542.compiler.util;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;

@@ -1,3 +1,9 @@
+package com.cs4542.compiler.lex;
+
+import com.cs4542.compiler.token.Token;
+import com.cs4542.compiler.token.TokenType;
+import com.cs4542.compiler.util.Util;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,11 +16,11 @@ public class LexicalAnalyzer {
     private static boolean isPredefinedToken() {
         ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
         for (String token: predefinedTokens) {
-             int tokenSize = token.length();
-             if(readPointer+tokenSize<=program.length() &&
-                     program.substring(readPointer, readPointer+tokenSize).equals(token)) {
-                 return true;
-             }
+            int tokenSize = token.length();
+            if(readPointer+tokenSize<=program.length() &&
+                    program.substring(readPointer, readPointer+tokenSize).equals(token)) {
+                return true;
+            }
         }
         return false;
     }
@@ -34,7 +40,7 @@ public class LexicalAnalyzer {
     private static void readSingleLineComment() {
         int startIndex = readPointer;
         // loop while the character is not a line break.
-        while(readPointer<program.length() && Utils.GetCharFromString(program, readPointer).matches(".")) {
+        while(readPointer<program.length() && Util.GetCharFromString(program, readPointer).matches(".")) {
             readPointer++;
         }
         int endIndex = readPointer;
@@ -121,12 +127,13 @@ public class LexicalAnalyzer {
 
     private static void dumpTokens(){
         try {
-            FileWriter writer = new FileWriter("tokens.txt");
+            FileWriter writer = new FileWriter("lex-tokens.txt");
             writer.write("Lexical Analyzer Token Dump.\n");
             int index = 0;
             for(Token token: tokens) {
                 // TODO: fix escape character printing
-                writer.write((index++) +"\t"+token.value+"\t"+token.type+"\n");
+                System.out.println((index) +"\t"+token.getValue()+"\t"+token.getType()+"\n");
+                writer.write((index++) +"\t"+token.getValue()+"\t"+token.getType()+"\n");
             }
             writer.close();
         } catch (IOException e) {

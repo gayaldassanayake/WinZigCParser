@@ -1,22 +1,18 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class LexicalAnalyzer {
     private static int readPointer =0;
     private static final ArrayList<Token> tokens = new ArrayList<>();
-    private static final ArrayList<Character> program = new ArrayList<>();
-
-    private static void convertProgramToCharList(String str) {
-        for (char ch : str.toCharArray()) {
-            program.add(ch);
-        }
-    }
+    private static String program;
 
     private static boolean isPredefinedToken() {
         ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
         for (String token: predefinedTokens) {
              int tokenSize = token.length();
-             if(readPointer+tokenSize<=program.size() &&
-                     program.subList(readPointer, readPointer+tokenSize).toString().equals(token)) {
+             if(readPointer+tokenSize<=program.length() &&
+                     program.substring(readPointer, readPointer+tokenSize).equals(token)) {
                  return true;
              }
         }
@@ -38,78 +34,78 @@ public class LexicalAnalyzer {
     private static void readSingleLineComment() {
         int startIndex = readPointer;
         // loop while the character is not a line break.
-        while(readPointer<program.size() && String.valueOf(program.get(readPointer)).matches(".")) {
+        while(readPointer<program.length() && Utils.GetCharFromString(program, readPointer).matches(".")) {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.subList(startIndex, endIndex).toString(), TokenType.COMMENT));
+        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.COMMENT));
     }
 
     private static void readMultiLineComment() {
         int startIndex = readPointer;
         // loop while the character is a '}'.
-        while(readPointer<program.size() && !program.get(readPointer).equals('}')) {
+        while(readPointer<program.length() && (program.charAt(readPointer) != '}')) {
             readPointer++;
         }
         int endIndex = ++readPointer;
-        tokens.add(new Token(program.subList(startIndex, endIndex).toString(), TokenType.COMMENT));
+        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.COMMENT));
     }
 
     private static void readWhitespace() {
         int startIndex = readPointer;
-        while(readPointer<program.size() && Character.isWhitespace(program.get(readPointer))) {
+        while(readPointer<program.length() && Character.isWhitespace(program.charAt(readPointer))) {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.subList(startIndex, endIndex).toString(), TokenType.WHITESPACE));
+        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.WHITESPACE));
     }
 
     private static void readChar() {
         int startIndex = readPointer;
         readPointer+=2;
-        if(!program.get(readPointer).equals('\'')) {
+        if(program.charAt(readPointer) != '\'') {
             throw new Error("Erroneous char");
         }
         int endIndex = ++readPointer;
-        tokens.add(new Token(program.subList(startIndex, endIndex).toString(), TokenType.CHAR));
+        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.CHAR));
     }
 
     private static void readString() {
         int startIndex = readPointer;
         readPointer++;
-        while(readPointer<program.size() && !program.get(readPointer).equals('"')) {
+        while(readPointer<program.length() && program.charAt(readPointer) != '"') {
             readPointer++;
         }
         int endIndex = ++readPointer;
-        tokens.add(new Token(program.subList(startIndex, endIndex).toString(), TokenType.STRING));
+        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.STRING));
     }
 
     private static void readIdentifier() {
         int startIndex = readPointer;
         readPointer++;
-        while(readPointer<program.size() && isIdentifierTail(program.get(readPointer))) {
+        while(readPointer<program.length() && isIdentifierTail(program.charAt(readPointer))) {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.subList(startIndex, endIndex).toString(), TokenType.IDENTIFIER));
+        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.IDENTIFIER));
     }
 
     private static void readInteger() {
         int startIndex = readPointer;
         readPointer++;
-        while(readPointer<program.size() && isInteger(program.get(readPointer))) {
+        while(readPointer<program.length() && isInteger(program.charAt(readPointer))) {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.subList(startIndex, endIndex).toString(), TokenType.INTEGER));
+        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.INTEGER));
     }
 
     private static void readPredefinedToken() {
         ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
         for (String token: predefinedTokens) {
             int tokenSize = token.length();
-            if(readPointer+tokenSize<=program.size() &&
-                    program.subList(readPointer, readPointer+tokenSize).toString().equals(token)) {
+            if(readPointer+tokenSize<=program.length() &&
+                    program.substring(readPointer, readPointer+tokenSize).equals(token)) {
                 tokens.add(new Token(token, TokenType.PREDEFINED));
                 readPointer+=tokenSize;
                 break;
@@ -117,13 +113,27 @@ public class LexicalAnalyzer {
         }
     }
 
-    public static ArrayList<Token> scan(String programStr) throws Exception {
+    private static void dumpTokens(){
+        try {
+            FileWriter writer = new FileWriter("tokens.txt");
+            writer.write("Lexical Analyzer Token Dump.\n");
+            int index = 0;
+            for(Token token: tokens) {
+                    writer.write((index++) +"\t"+token.value+"\t"+token.type+"\n");
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ArrayList<Token> scan(String program) {
         // TODO: handle readPointer exceeding the program size with proper error
         // TODO: remove /n from whitespaces and add to predefined tokens.
         // TODO: check if an entire program is tokenized correctly.
-        convertProgramToCharList(programStr);
-        while (readPointer<program.size()) {
-            Character ch = program.get(readPointer);
+        LexicalAnalyzer.program = program;
+        while (readPointer<program.length()) {
+            Character ch = program.charAt(readPointer);
             if(ch.equals('#')) {
                 readSingleLineComment();
             } else if(ch.equals('{')){
@@ -142,7 +152,7 @@ public class LexicalAnalyzer {
                 } else if(isIdentifierHead(ch)) {
                     readIdentifier();
                 } else {
-                    System.out.println("Ignore: " + program.get(readPointer));
+                    System.out.println("Ignore: " + program.charAt(readPointer));
                     readPointer++;
 //              throw new Exception("Invalid token found during scanning");
                 }
@@ -155,7 +165,7 @@ public class LexicalAnalyzer {
         // handle string
         // handle comment
         // handle predef tokens
-
+        dumpTokens();
         return tokens;
     }
 }

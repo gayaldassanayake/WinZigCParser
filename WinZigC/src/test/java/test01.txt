@@ -10,3 +10,8 @@ program factors:
 
 var
   i : integer;
+function Factor ( i : integer ):integer;
+var
+    j : integer;
+begin
+    if i > 10 then

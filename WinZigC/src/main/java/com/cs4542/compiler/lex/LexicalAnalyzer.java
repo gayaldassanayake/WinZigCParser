@@ -133,7 +133,6 @@ public class LexicalAnalyzer {
             int index = 0;
             for(Token token: tokens) {
                 // TODO: fix escape character printing
-                System.out.println((index) +"\t"+token.getValue()+"\t"+token.getType()+"\n");
                 writer.write((index++) +"\t"+token.getValue()+"\t"+token.getType()+"\n");
             }
             writer.close();
@@ -143,9 +142,7 @@ public class LexicalAnalyzer {
     }
 
     public static ArrayList<Token> scan(String program) throws InvalidTokenException {
-        // TODO: handle readPointer exceeding the program size with proper error
         // TODO: remove /n from whitespaces and add to predefined tokens.
-        // TODO: check if an entire program is tokenized correctly.
         LexicalAnalyzer.program = program;
         while (readPointer<program.length()) {
             Character ch = program.charAt(readPointer);

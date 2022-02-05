@@ -9,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.cs4542.compiler.util.Util.convertEscapeCharsToPrintable;
+
 public class LexicalAnalyzer {
     private static int readPointer =0;
     private static final ArrayList<Token> tokens = new ArrayList<>();
@@ -133,7 +135,8 @@ public class LexicalAnalyzer {
             int index = 0;
             for(Token token: tokens) {
                 // TODO: fix escape character printing
-                writer.write((index++) +"\t"+token.getValue()+"\t"+token.getType()+"\n");
+                writer.write(
+                        (index++) +"\t"+convertEscapeCharsToPrintable(token.getValue())+"\t"+token.getType()+"\n");
             }
             writer.close();
         } catch (IOException e) {

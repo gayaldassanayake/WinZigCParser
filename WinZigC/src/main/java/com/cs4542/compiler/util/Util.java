@@ -22,4 +22,24 @@ public class Util {
     public static String getCharFromString(String str, int index) {
         return index<str.length()? str.substring(index, index+1): "";
     }
+
+    public static String convertEscapeCharsToPrintable(String str) {
+        StringBuilder builder = new StringBuilder();
+        for(int i=0; i< str.length(); i++) {
+            if (str.charAt(i) == '\n') {
+                builder.append("\\n");
+            } else if (str.charAt(i) == '\t') {
+                builder.append("\\t");
+            } else if (str.charAt(i) == '\b') {
+                builder.append("\\b");
+            } else if (str.charAt(i) == '\r') {
+                builder.append("\\r");
+            } else if (str.charAt(i) == '\f') {
+                builder.append("\\f");
+            } else {
+                builder.append(str.charAt(i));
+            }
+        }
+        return builder.toString();
+    }
 }

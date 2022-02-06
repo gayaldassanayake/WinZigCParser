@@ -19,9 +19,10 @@ public class LexicalAnalyzer {
     private static boolean isPredefinedToken() {
         ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
         for (String token: predefinedTokens) {
-            int tokenSize = token.length();
+            int tokenSize = token.contains("\\")? token.length()-1: token.length();
             if(readPointer+tokenSize<=program.length() &&
-                    program.substring(readPointer, readPointer+tokenSize).equals(token)) {
+                    Util.convertEscapeCharsToPrintable(program.substring(readPointer, readPointer+tokenSize))
+                            .equals(token)) {
                 return true;
             }
         }
@@ -65,7 +66,8 @@ public class LexicalAnalyzer {
 
     private static void readWhitespace() {
         int startIndex = readPointer;
-        while(readPointer<program.length() && Character.isWhitespace(program.charAt(readPointer))) {
+        while(readPointer<program.length() && Character.isWhitespace(program.charAt(readPointer))
+                && program.charAt(readPointer) != '\n') {
             readPointer++;
         }
         int endIndex = readPointer;
@@ -118,9 +120,10 @@ public class LexicalAnalyzer {
     private static void readPredefinedToken() {
         ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
         for (String token: predefinedTokens) {
-            int tokenSize = token.length();
+            int tokenSize = token.contains("\\")? token.length()-1: token.length();
             if(readPointer+tokenSize<=program.length() &&
-                    program.substring(readPointer, readPointer+tokenSize).equals(token)) {
+                    Util.convertEscapeCharsToPrintable(program.substring(readPointer, readPointer+tokenSize))
+                            .equals(token)) {
                 tokens.add(new Token(token, TokenType.PREDEFINED));
                 readPointer+=tokenSize;
                 break;
@@ -153,7 +156,7 @@ public class LexicalAnalyzer {
                 readSingleLineComment();
             } else if(ch.equals('{')){
                 readMultiLineComment();
-            } else if(Character.isWhitespace(ch)){
+            } else if(Character.isWhitespace(ch) && program.charAt(readPointer) != '\n'){
                 readWhitespace();
             } else if(ch=='\'') {
                 readChar();

@@ -19,10 +19,9 @@ public class Scanner {
     private static boolean isPredefinedToken() {
         ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
         for (String token: predefinedTokens) {
-            int tokenSize = token.contains("\\")? token.length()-1: token.length();
+            int tokenSize = token.length();
             if(readPointer+tokenSize<=program.length() &&
-                    Util.convertEscapeCharsToPrintable(program.substring(readPointer, readPointer+tokenSize))
-                            .equals(token)) {
+                    program.substring(readPointer, readPointer+tokenSize).equals(token)) {
                 return true;
             }
         }
@@ -74,6 +73,11 @@ public class Scanner {
         tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.WHITESPACE));
     }
 
+    private static void readNewLine() {
+        tokens.add(new Token("\n", TokenType.NEWLINE));
+        readPointer++;
+    }
+
     private static void readChar() throws InvalidTokenException {
         int startIndex = readPointer;
         readPointer+=2;
@@ -120,10 +124,9 @@ public class Scanner {
     private static void readPredefinedToken() {
         ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
         for (String token: predefinedTokens) {
-            int tokenSize = token.contains("\\")? token.length()-1: token.length();
+            int tokenSize = token.length();
             if(readPointer+tokenSize<=program.length() &&
-                    Util.convertEscapeCharsToPrintable(program.substring(readPointer, readPointer+tokenSize))
-                            .equals(token)) {
+                    program.substring(readPointer, readPointer+tokenSize).equals(token)) {
                 tokens.add(new Token(token, TokenType.PREDEFINED));
                 readPointer+=tokenSize;
                 break;
@@ -156,6 +159,8 @@ public class Scanner {
                 readMultiLineComment();
             } else if(Character.isWhitespace(ch) && program.charAt(readPointer) != '\n'){
                 readWhitespace();
+            } else if(ch.equals('\n')) {
+                readNewLine();
             } else if(ch=='\'') {
                 readChar();
             } else if(ch.equals('"')) {

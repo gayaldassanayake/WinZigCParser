@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import static com.cs4542.compiler.util.Util.convertEscapeCharsToPrintable;
 
-public class LexicalAnalyzer {
+public class Scanner {
     private static int readPointer =0;
     private static final ArrayList<Token> tokens = new ArrayList<>();
     private static String program;
@@ -147,7 +147,7 @@ public class LexicalAnalyzer {
     }
 
     public static ArrayList<Token> scan(String program) throws InvalidTokenException {
-        LexicalAnalyzer.program = program;
+        Scanner.program = program;
         while (readPointer<program.length()) {
             Character ch = program.charAt(readPointer);
             if(ch.equals('#')) {

@@ -1,6 +1,6 @@
 package com.cs4542.compiler;
 
-import com.cs4542.compiler.lex.LexicalAnalyzer;
+import com.cs4542.compiler.lex.Scanner;
 import com.cs4542.compiler.token.Token;
 import com.cs4542.compiler.util.InvalidTokenException;
 import com.cs4542.compiler.util.ProgramReader;
@@ -17,6 +17,6 @@ public class Compiler {
             return;
         }
         String program = ProgramReader.readProgram(arg);
-        ArrayList<Token> tokens = LexicalAnalyzer.scan(program);
+        ArrayList<Token> tokens = Scanner.scan(program);
     }
 }

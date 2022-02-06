@@ -5,13 +5,9 @@ import com.cs4542.compiler.token.TokenType;
 import com.cs4542.compiler.util.InvalidTokenException;
 import com.cs4542.compiler.util.Util;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.cs4542.compiler.util.Util.convertEscapeCharsToPrintable;
-
-public class LexicalAnalyzer {
+public class Scanner {
     private static int readPointer =0;
     private static final ArrayList<Token> tokens = new ArrayList<>();
     private static String program;
@@ -19,10 +15,9 @@ public class LexicalAnalyzer {
     private static boolean isPredefinedToken() {
         ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
         for (String token: predefinedTokens) {
-            int tokenSize = token.contains("\\")? token.length()-1: token.length();
+            int tokenSize = token.length();
             if(readPointer+tokenSize<=program.length() &&
-                    Util.convertEscapeCharsToPrintable(program.substring(readPointer, readPointer+tokenSize))
-                            .equals(token)) {
+                    program.substring(readPointer, readPointer+tokenSize).equals(token)) {
                 return true;
             }
         }
@@ -74,6 +69,11 @@ public class LexicalAnalyzer {
         tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.WHITESPACE));
     }
 
+    private static void readNewLine() {
+        tokens.add(new Token("\n", TokenType.NEWLINE));
+        readPointer++;
+    }
+
     private static void readChar() throws InvalidTokenException {
         int startIndex = readPointer;
         readPointer+=2;
@@ -120,10 +120,9 @@ public class LexicalAnalyzer {
     private static void readPredefinedToken() {
         ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
         for (String token: predefinedTokens) {
-            int tokenSize = token.contains("\\")? token.length()-1: token.length();
+            int tokenSize = token.length();
             if(readPointer+tokenSize<=program.length() &&
-                    Util.convertEscapeCharsToPrintable(program.substring(readPointer, readPointer+tokenSize))
-                            .equals(token)) {
+                    program.substring(readPointer, readPointer+tokenSize).equals(token)) {
                 tokens.add(new Token(token, TokenType.PREDEFINED));
                 readPointer+=tokenSize;
                 break;
@@ -131,23 +130,8 @@ public class LexicalAnalyzer {
         }
     }
 
-    private static void dumpTokens(){
-        try {
-            FileWriter writer = new FileWriter("lex-tokens.txt");
-            writer.write("Lexical Analyzer Token Dump.\n");
-            int index = 0;
-            for(Token token: tokens) {
-                writer.write(
-                        (index++) +"\t"+convertEscapeCharsToPrintable(token.getValue())+"\t"+token.getType()+"\n");
-            }
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static ArrayList<Token> scan(String program) throws InvalidTokenException {
-        LexicalAnalyzer.program = program;
+        Scanner.program = program;
         while (readPointer<program.length()) {
             Character ch = program.charAt(readPointer);
             if(ch.equals('#')) {
@@ -156,6 +140,8 @@ public class LexicalAnalyzer {
                 readMultiLineComment();
             } else if(Character.isWhitespace(ch) && program.charAt(readPointer) != '\n'){
                 readWhitespace();
+            } else if(ch.equals('\n')) {
+                readNewLine();
             } else if(ch=='\'') {
                 readChar();
             } else if(ch.equals('"')) {
@@ -172,7 +158,7 @@ public class LexicalAnalyzer {
                 }
             }
         }
-        dumpTokens();
+        Util.dumpTokens(tokens, "scanner-tokens.txt");
         return tokens;
     }
 }

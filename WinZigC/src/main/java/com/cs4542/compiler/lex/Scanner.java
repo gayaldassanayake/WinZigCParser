@@ -5,11 +5,7 @@ import com.cs4542.compiler.token.TokenType;
 import com.cs4542.compiler.util.InvalidTokenException;
 import com.cs4542.compiler.util.Util;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-
-import static com.cs4542.compiler.util.Util.convertEscapeCharsToPrintable;
 
 public class Scanner {
     private static int readPointer =0;
@@ -134,21 +130,6 @@ public class Scanner {
         }
     }
 
-    private static void dumpTokens(){
-        try {
-            FileWriter writer = new FileWriter("lex-tokens.txt");
-            writer.write("Lexical Analyzer Token Dump.\n");
-            int index = 0;
-            for(Token token: tokens) {
-                writer.write(
-                        (index++) +"\t"+convertEscapeCharsToPrintable(token.getValue())+"\t"+token.getType()+"\n");
-            }
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static ArrayList<Token> scan(String program) throws InvalidTokenException {
         Scanner.program = program;
         while (readPointer<program.length()) {
@@ -177,7 +158,7 @@ public class Scanner {
                 }
             }
         }
-        dumpTokens();
+        Util.dumpTokens(tokens, "scanner-tokens.txt");
         return tokens;
     }
 }

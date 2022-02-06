@@ -26,4 +26,6 @@ hs_err_pid*
 .idea/
 
 # output files
-lex-tokens.txt
+scanner-tokens.txt
+screener-tokens.txt
+

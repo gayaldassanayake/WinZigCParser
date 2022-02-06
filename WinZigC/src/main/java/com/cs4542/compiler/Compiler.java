@@ -1,6 +1,7 @@
 package com.cs4542.compiler;
 
 import com.cs4542.compiler.lex.Scanner;
+import com.cs4542.compiler.lex.Screener;
 import com.cs4542.compiler.token.Token;
 import com.cs4542.compiler.util.InvalidTokenException;
 import com.cs4542.compiler.util.ProgramReader;
@@ -17,6 +18,7 @@ public class Compiler {
             return;
         }
         String program = ProgramReader.readProgram(arg);
-        ArrayList<Token> tokens = Scanner.scan(program);
+        ArrayList<Token> scannerTokens = Scanner.scan(program);
+        ArrayList<Token> screenerTokens = Screener.screen(scannerTokens);
     }
 }

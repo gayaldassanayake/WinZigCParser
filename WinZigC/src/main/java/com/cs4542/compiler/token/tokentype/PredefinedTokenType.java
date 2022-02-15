@@ -1,8 +1,8 @@
-package com.cs4542.compiler.token;
+package com.cs4542.compiler.token.tokentype;
 
 import java.util.HashMap;
 
-public enum PredefinedTokenType implements TokenType {
+public enum PredefinedTokenType implements ScannerTokenType {
     T_PROGRAM,
     T_VAR,
     T_CONST,
@@ -48,6 +48,8 @@ public enum PredefinedTokenType implements TokenType {
     T_BEGBLOCK,
     T_COLON,
     T_SEMICOLON,
+    T_SINGLEDOT,
+    T_COMMA,
     T_OPENBRAC,
     T_CLOSEBRAC,
     T_PLUS,
@@ -103,6 +105,8 @@ public enum PredefinedTokenType implements TokenType {
         predefinedTokenValues.put("{", T_BEGBLOCK);
         predefinedTokenValues.put(":", T_COLON);
         predefinedTokenValues.put(";", T_SEMICOLON);
+        predefinedTokenValues.put(".", T_SINGLEDOT);
+        predefinedTokenValues.put(",", T_COMMA);
         predefinedTokenValues.put("(", T_OPENBRAC);
         predefinedTokenValues.put(")", T_CLOSEBRAC);
         predefinedTokenValues.put("+", T_PLUS);

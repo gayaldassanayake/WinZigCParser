@@ -1,9 +1,9 @@
 package com.cs4542.compiler.lex;
 
-import com.cs4542.compiler.token.BasicTokenType;
-import com.cs4542.compiler.token.PredefinedTokenType;
-import com.cs4542.compiler.token.Token;
-import com.cs4542.compiler.util.InvalidTokenException;
+import com.cs4542.compiler.token.ScannerToken;
+import com.cs4542.compiler.token.tokentype.BasicTokenType;
+import com.cs4542.compiler.token.tokentype.PredefinedTokenType;
+import com.cs4542.compiler.exception.InvalidTokenException;
 import com.cs4542.compiler.util.Util;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class Scanner {
     private static int readPointer =0;
-    private static final ArrayList<Token> tokens = new ArrayList<>();
+    private static final ArrayList<ScannerToken> tokens = new ArrayList<>();
     private static String program;
 
     private static boolean isPredefinedToken() {
@@ -45,7 +45,7 @@ public class Scanner {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.COMMENT));
+        tokens.add(new ScannerToken(program.substring(startIndex, endIndex), BasicTokenType.COMMENT));
     }
 
     private static void readMultiLineComment() throws InvalidTokenException {
@@ -54,11 +54,11 @@ public class Scanner {
         while((program.charAt(readPointer) != '}')) {
             readPointer++;
             if (readPointer>=program.length()) {
-                throw new InvalidTokenException("Invalid comment token");
+                throw new InvalidTokenException("comment");
             }
         }
         int endIndex = ++readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.COMMENT));
+        tokens.add(new ScannerToken(program.substring(startIndex, endIndex), BasicTokenType.COMMENT));
     }
 
     private static void readWhitespace() {
@@ -68,11 +68,11 @@ public class Scanner {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.WHITESPACE));
+        tokens.add(new ScannerToken(program.substring(startIndex, endIndex), BasicTokenType.WHITESPACE));
     }
 
     private static void readNewLine() {
-        tokens.add(new Token("\n", BasicTokenType.NEWLINE));
+        tokens.add(new ScannerToken("\n", BasicTokenType.NEWLINE));
         readPointer++;
     }
 
@@ -80,10 +80,10 @@ public class Scanner {
         int startIndex = readPointer;
         readPointer+=2;
         if(program.charAt(readPointer) != '\'') {
-            throw new InvalidTokenException("Invalid char token");
+            throw new InvalidTokenException("char");
         }
         int endIndex = ++readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.CHAR));
+        tokens.add(new ScannerToken(program.substring(startIndex, endIndex), BasicTokenType.CHAR));
     }
 
     private static void readString() throws InvalidTokenException {
@@ -92,11 +92,11 @@ public class Scanner {
         while(program.charAt(readPointer) != '"') {
             readPointer++;
             if (readPointer>=program.length()) {
-                throw new InvalidTokenException("Invalid string token");
+                throw new InvalidTokenException("string");
             }
         }
         int endIndex = ++readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.STRING));
+        tokens.add(new ScannerToken(program.substring(startIndex, endIndex), BasicTokenType.STRING));
     }
 
     private static void readIdentifier() {
@@ -106,7 +106,7 @@ public class Scanner {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.IDENTIFIER));
+        tokens.add(new ScannerToken(program.substring(startIndex, endIndex), BasicTokenType.IDENTIFIER));
     }
 
     private static void readInteger() {
@@ -116,7 +116,7 @@ public class Scanner {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.INTEGER));
+        tokens.add(new ScannerToken(program.substring(startIndex, endIndex), BasicTokenType.INTEGER));
     }
 
     private static void readPredefinedToken() {
@@ -126,14 +126,14 @@ public class Scanner {
             int tokenSize = key.length();
             if(readPointer+tokenSize<=program.length() &&
                     program.substring(readPointer, readPointer+tokenSize).equals(key)) {
-                tokens.add(new Token(key, predefinedTokens.get(key)));
+                tokens.add(new ScannerToken(key, predefinedTokens.get(key)));
                 readPointer+=tokenSize;
                 break;
             }
         }
     }
 
-    public static ArrayList<Token> scan(String program) throws InvalidTokenException {
+    public static ArrayList<ScannerToken> scan(String program) throws InvalidTokenException {
         Scanner.program = program;
         while (readPointer<program.length()) {
             Character ch = program.charAt(readPointer);
@@ -157,7 +157,7 @@ public class Scanner {
                 } else if(isIdentifierHead(ch)) {
                     readIdentifier();
                 } else {
-                    throw new InvalidTokenException("Invalid token found during scanning");
+                    throw new InvalidTokenException("unknown");
                 }
             }
         }

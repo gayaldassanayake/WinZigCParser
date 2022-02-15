@@ -1,6 +1,7 @@
 package com.cs4542.compiler.util;
 
 import com.cs4542.compiler.token.Token;
+import com.cs4542.compiler.token.ScannerToken;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -47,12 +48,12 @@ public class Util {
         return builder.toString();
     }
 
-    public static void dumpTokens(ArrayList<Token> tokens, String filepath){
+    public static void dumpTokens(ArrayList<ScannerToken> tokens, String filepath){
         try {
             FileWriter writer = new FileWriter(filepath);
             writer.write("Lexical Analyzer Token Dump.\n");
             int index = 0;
-            for(Token token: tokens) {
+            for(ScannerToken token: tokens) {
                 writer.write(
                         (index++) +"\t"+convertEscapeCharsToPrintable(token.getValue())+"\t"+token.getType()+"\n");
             }

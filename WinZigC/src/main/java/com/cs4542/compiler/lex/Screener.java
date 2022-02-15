@@ -1,17 +1,17 @@
 package com.cs4542.compiler.lex;
 
-import com.cs4542.compiler.token.BasicTokenType;
-import com.cs4542.compiler.token.Token;
-import com.cs4542.compiler.token.TokenType;
+import com.cs4542.compiler.token.ScannerToken;
+import com.cs4542.compiler.token.tokentype.BasicTokenType;
+import com.cs4542.compiler.token.tokentype.TokenType;
 import com.cs4542.compiler.util.Util;
 
 import java.util.ArrayList;
 
 public class Screener {
-    private static final ArrayList<Token> processedTokens = new ArrayList<>();
+    private static final ArrayList<ScannerToken> processedTokens = new ArrayList<>();
 
-    public static ArrayList<Token> screen (ArrayList<Token> originalTokens) {
-        for (Token token: originalTokens) {
+    public static ArrayList<ScannerToken> screen (ArrayList<ScannerToken> originalTokens) {
+        for (ScannerToken token: originalTokens) {
             TokenType currentTokenType = token.getType();
             if ((currentTokenType != BasicTokenType.COMMENT) && (currentTokenType != BasicTokenType.WHITESPACE) &&
                     (currentTokenType != BasicTokenType.NEWLINE)) {

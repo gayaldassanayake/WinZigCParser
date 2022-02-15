@@ -1,5 +1,6 @@
 package com.cs4542.compiler.lex;
 
+import com.cs4542.compiler.token.BasicTokenType;
 import com.cs4542.compiler.token.Token;
 import com.cs4542.compiler.token.TokenType;
 import com.cs4542.compiler.util.Util;
@@ -12,8 +13,8 @@ public class Screener {
     public static ArrayList<Token> screen (ArrayList<Token> originalTokens) {
         for (Token token: originalTokens) {
             TokenType currentTokenType = token.getType();
-            if ((currentTokenType != TokenType.COMMENT) && (currentTokenType != TokenType.WHITESPACE) &&
-                    (currentTokenType != TokenType.NEWLINE)) {
+            if ((currentTokenType != BasicTokenType.COMMENT) && (currentTokenType != BasicTokenType.WHITESPACE) &&
+                    (currentTokenType != BasicTokenType.NEWLINE)) {
                 processedTokens.add(token);
             }
         }

@@ -1,11 +1,13 @@
 package com.cs4542.compiler.lex;
 
+import com.cs4542.compiler.token.BasicTokenType;
+import com.cs4542.compiler.token.PredefinedTokenType;
 import com.cs4542.compiler.token.Token;
-import com.cs4542.compiler.token.TokenType;
 import com.cs4542.compiler.util.InvalidTokenException;
 import com.cs4542.compiler.util.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Scanner {
     private static int readPointer =0;
@@ -13,8 +15,8 @@ public class Scanner {
     private static String program;
 
     private static boolean isPredefinedToken() {
-        ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
-        for (String token: predefinedTokens) {
+        HashMap<String, PredefinedTokenType> predefinedTokens = PredefinedTokenType.getPredefinedTokenValues();
+        for (String token: predefinedTokens.keySet()) {
             int tokenSize = token.length();
             if(readPointer+tokenSize<=program.length() &&
                     program.substring(readPointer, readPointer+tokenSize).equals(token)) {
@@ -43,7 +45,7 @@ public class Scanner {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.COMMENT));
+        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.COMMENT));
     }
 
     private static void readMultiLineComment() throws InvalidTokenException {
@@ -56,7 +58,7 @@ public class Scanner {
             }
         }
         int endIndex = ++readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.COMMENT));
+        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.COMMENT));
     }
 
     private static void readWhitespace() {
@@ -66,11 +68,11 @@ public class Scanner {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.WHITESPACE));
+        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.WHITESPACE));
     }
 
     private static void readNewLine() {
-        tokens.add(new Token("\n", TokenType.NEWLINE));
+        tokens.add(new Token("\n", BasicTokenType.NEWLINE));
         readPointer++;
     }
 
@@ -81,7 +83,7 @@ public class Scanner {
             throw new InvalidTokenException("Invalid char token");
         }
         int endIndex = ++readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.CHAR));
+        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.CHAR));
     }
 
     private static void readString() throws InvalidTokenException {
@@ -94,7 +96,7 @@ public class Scanner {
             }
         }
         int endIndex = ++readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.STRING));
+        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.STRING));
     }
 
     private static void readIdentifier() {
@@ -104,7 +106,7 @@ public class Scanner {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.IDENTIFIER));
+        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.IDENTIFIER));
     }
 
     private static void readInteger() {
@@ -114,16 +116,17 @@ public class Scanner {
             readPointer++;
         }
         int endIndex = readPointer;
-        tokens.add(new Token(program.substring(startIndex, endIndex), TokenType.INTEGER));
+        tokens.add(new Token(program.substring(startIndex, endIndex), BasicTokenType.INTEGER));
     }
 
     private static void readPredefinedToken() {
-        ArrayList<String> predefinedTokens = Token.getPredefinedTokens();
-        for (String token: predefinedTokens) {
-            int tokenSize = token.length();
+        HashMap<String, PredefinedTokenType> predefinedTokens = PredefinedTokenType.getPredefinedTokenValues();
+
+        for (String key: predefinedTokens.keySet()) {
+            int tokenSize = key.length();
             if(readPointer+tokenSize<=program.length() &&
-                    program.substring(readPointer, readPointer+tokenSize).equals(token)) {
-                tokens.add(new Token(token, TokenType.PREDEFINED));
+                    program.substring(readPointer, readPointer+tokenSize).equals(key)) {
+                tokens.add(new Token(key, predefinedTokens.get(key)));
                 readPointer+=tokenSize;
                 break;
             }

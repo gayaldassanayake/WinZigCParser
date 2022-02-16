@@ -39,8 +39,8 @@ public class Parser {
         }
     }
 
-    private static void buildTree(ASTToken astToken, int n) {
-        ASTNode headNode = new ASTNode(astToken, null);
+    private static void buildTree(ASTTokenType astTokenType, int n) {
+        ASTNode headNode = new ASTNode(new ASTToken(astTokenType), null);
         for(int i=0; i< n; i++) {
             ASTNode childNode = stack.pop();
             childNode.setParent(headNode);
@@ -67,7 +67,7 @@ public class Parser {
             next = getNextToken();
             assert next.getType() == PredefinedTokenType.T_SINGLEDOT;
             read(next);
-            buildTree(new ASTToken(ASTTokenType.PROGRAM), 7);
+            buildTree(ASTTokenType.PROGRAM, 7);
         } else {
             throw new OutOfOrderTokenOrderException(next);
         }
@@ -83,7 +83,38 @@ public class Parser {
     // Consts -> 'const' Const list ',' ';' => "consts"
     // Consts ->                            => "consts"
     private static void procedureConsts() {
-        ScannerToken token = getNextToken();
+        ScannerToken next;
+        if(peekNextToken().getType().equals(PredefinedTokenType.T_CONST)) {
+            // read 'const' and increment the read pointer
+            int n = 1;
+            next = getNextToken();
+            procedureConst();
+            while(peekNextToken().getType().equals(PredefinedTokenType.T_COMMA)) {
+                next = getNextToken();
+                read(next);
+                next = getNextToken();
+                assert next.getType().equals(PredefinedTokenType.T_CONST);
+                procedureConst();
+                n++;
+            }
+            next = getNextToken();
+            assert next.getType().equals(PredefinedTokenType.T_SEMICOLON);
+            read((next));
+            buildTree(ASTTokenType.CONSTS, n);
+        } else {
+            buildTree(ASTTokenType.CONSTS, 0);
+        }
+    }
+
+    // Const -> Name '=' ConstValue => "const"
+    private static void procedureConst() {
+        ScannerToken next = getNextToken();
+        procedureName();
+        next = getNextToken();
+        assert next.getType().equals(PredefinedTokenType.T_EQUAL);
+        read(next);
+        next = getNextToken();
+
     }
 
     private static void procedureBody() {

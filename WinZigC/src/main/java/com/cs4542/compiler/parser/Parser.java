@@ -251,6 +251,119 @@ public class Parser {
 
     }
 
+    // Statement -> Assignment
+    // Statement -> 'output' '(' OutExp list ',' ')'                            => "output"
+    // Statement -> 'if' Expression 'then' Statement ('else' Statement)?        => "if"
+    // Statement -> 'while' Expression 'do' Statement                           => "while"
+    // Statement -> 'repeat' Statement list ';' 'until' Expression              => "repeat"
+    // Statement -> 'for' '(' ForStat ';' ForExp ';' ForStat ')' Statement      => "for"
+    // Statement -> 'loop' Statement list ';' 'pool'                            => "loop"
+    // Statement -> 'case' Expression 'of' Caseclauses OtherwiseClause 'end'    => "case"
+    // Statement -> 'read' '(' Name list ',' ')'                                => "read"
+    // Statement -> 'exit'                                                      => "exit"
+    // Statement -> 'return' Expression                                         => "return"
+    // Statement -> Body
+    // Statement ->                                                             => "<null>"
+    private static void procedureStatement() {
+
+    }
+
+    // OutExp -> Expression     => "integer"
+    // OutExp -> StringNode     => "string";
+    private static void procedureOutExp() {
+
+    }
+
+    // StringNode -> '<string>'
+    private static void procedureStringNode() {
+
+    }
+
+    // Caseclauses-> (Caseclause ';')+
+    private static void procedureCaseclauses() {
+
+    }
+
+    // Caseclause -> CaseExpression list ',' ':' Statement  => "case_clause"
+    private static void procedureCaseclause() {
+
+    }
+
+    // CaseExpression -> ConstValue
+    // CaseExpression -> ConstValue '..' ConstValue     => "..";
+    private static void procedureCaseExpression() {
+
+    }
+
+    // OtherwiseClause -> 'otherwise' Statement         => "otherwise"
+    // OtherwiseClause ->
+    private static void procedureOtherwiseClause() {
+
+    }
+
+    // Assignment -> Name ':=' Expression               => "assign"
+    // Assignment -> Name ':=:' Name                    => "swap";
+    private static void procedureAssignment() {
+
+    }
+
+    // ForStat -> Assignment
+    // ForStat ->               => "<null>"
+    private static void procedureForStat() {
+
+    }
+
+    // ForExp -> Expression
+    // ForExp ->                => "true";
+    private static void procedureForExp() {
+
+    }
+
+    // Expression -> Term
+    // Expression -> Term '<=' Term     => "<="
+    // Expression -> Term '<' Term      => "<"
+    // Expression -> Term '>=' Term     => ">="
+    // Expression -> Term '>' Term      => ">"
+    // Expression -> Term '=' Term      => "="
+    // Expression -> Term '<>' Term     => "<>"
+    private static void procedureExpression() {
+
+    }
+
+    // Term -> Factor
+    // Term -> Term '+' Factor      => "+"
+    // Term -> Term '-' Factor      => "-"
+    // Term -> Term 'or' Factor     => "or"
+    private static void procedureTerm() {
+
+    }
+
+    // Factor -> Factor '*' Primary    => "*"
+    // Factor -> Factor '/' Primary    => "/"
+    // Factor -> Factor 'and' Primary  => "and"
+    // Factor -> Factor 'mod' Primary  => "mod"
+    // Factor -> Primary;
+    private static void procedureFactor() {
+
+    }
+
+    // Primary -> '-' Primary                       => "-"
+    // Primary -> '+' Primary
+    // Primary -> 'not' Primary                     => "not"
+    // Primary -> 'eof'                             => "eof"
+    // Primary -> Name
+    // Primary -> '<integer>'
+    // Primary -> '<char>'
+    // Primary -> Name '(' Expression list ',' ')'  => "call"
+    // Primary -> '(' Expression ')'
+    // Primary -> 'succ' '(' Expression ')'         => "succ"
+    // Primary -> 'pred' '(' Expression ')'         => "pred"
+    // Primary -> 'chr' '(' Expression ')'          => "chr"
+    // Primary -> -> 'ord' '(' Expression ')'       => "ord";
+    private static void procedurePrimary() {
+
+    }
+
     // Name -> '<identifier>'
     public static void procedureName() throws OutOfOrderTokenException {
         checkForOutOfOrderToken(next(), BasicTokenType.IDENTIFIER);

@@ -161,7 +161,7 @@ public class Parser {
     }
 
     // SubProgs -> Fcn* => "subprogs"
-    private static void procedureSubProgs() {
+    private static void procedureSubProgs() throws OutOfOrderTokenException {
         int n = 0;
         while(next().getType().equals(PredefinedTokenType.T_FUNCTION)) {
             procedureFcn();
@@ -171,13 +171,84 @@ public class Parser {
     }
 
     // Fcn -> 'function' Name '(' Params ')' ':' Name ';' Consts Types Dclns Body Name ';' => "fcn";
-    private static void procedureFcn() {
+    private static void procedureFcn() throws OutOfOrderTokenException {
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_FUNCTION);
+        read(next());
+        procedureName();
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_OPENBRAC);
+        read(next());
+        procedureParams();
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_CLOSEBRAC);
+        read(next());
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_COLON);
+        read(next());
+        procedureName();
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
+        read(next());
+        procedureConsts();
+        procedureTypes();
+        procedureDclns();
+        procedureDclns();
+        procedureBody();
+        procedureName();
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
+        read(next());
+        buildTree(ASTTokenType.FCN, 8);
     }
 
+    // Params -> Dcln list ';' => "params";
+    private static void procedureParams() throws OutOfOrderTokenException {
+        int n = 1;
+        procedureDclns();
+        while(next().getType().equals(PredefinedTokenType.T_SEMICOLON)) {
+            read(next());
+            procedureDclns();
+            n++;
+        }
+        buildTree(ASTTokenType.PARAMS, n);
+    }
+
+    // Dclns -> 'var' (Dcln ';')+       => "dclns"
+    // Dclns ->                         => "dclns"
+    private static void procedureDclns() throws OutOfOrderTokenException {
+        if(next().getType().equals(PredefinedTokenType.T_VAR)) {
+            checkForOutOfOrderToken(next(), PredefinedTokenType.T_VAR);
+            read(next());
+
+            int n = 1;
+            procedureDcln();
+            checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
+            read(next());
+            while(next().getType().equals(BasicTokenType.IDENTIFIER)) {
+                procedureDcln();
+                checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
+                read(next());
+                n++;
+            }
+            buildTree(ASTTokenType.DCLNS, n);
+        } else {
+            buildTree(ASTTokenType.DCLNS, 0);
+        }
+    }
+
+    // Dcln -> Name list ',' ':' Name => "var";
+    private static void procedureDcln() throws OutOfOrderTokenException {
+        int n = 2;
+        procedureName();
+        while(next().getType().equals(PredefinedTokenType.T_COMMA)) {
+            read(next());
+            procedureName();
+            n++;
+        }
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_COLON);
+        read(next());
+        procedureName();
+        buildTree(ASTTokenType.VAR, n);
+    }
+
+    // Body -> 'begin' Statement list ';' 'end' => "block";
     private static void procedureBody() {
-    }
 
-    private static void procedureDclns() {
     }
 
     // Name -> '<identifier>'

@@ -7,7 +7,10 @@ public enum ASTTokenType implements TokenType {
     TYPES,
     TYPE,
     LIT,
-    LIST,
     SUBPROGS,
     FCN,
+    PARAMS,
+    DCLNS,
+    VAR,
+    LIST,
 }

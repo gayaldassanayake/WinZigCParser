@@ -6,6 +6,7 @@ import com.cs4542.compiler.token.ScannerToken;
 import com.cs4542.compiler.token.tokentype.ASTTokenType;
 import com.cs4542.compiler.token.tokentype.BasicTokenType;
 import com.cs4542.compiler.token.tokentype.PredefinedTokenType;
+import com.cs4542.compiler.token.tokentype.ScannerTokenType;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -29,6 +30,12 @@ public class Parser {
         return tokens.get(readPointer);
     }
 
+    private static void checkForOutOfOrderToken(ScannerToken token, ScannerTokenType type) throws OutOfOrderTokenException {
+        if(!token.getType().equals(type)) {
+            throw new OutOfOrderTokenException(token);
+        }
+    }
+
     private static void read(ScannerToken token) {
         if(token.getType() instanceof BasicTokenType) {
             stack.push(new ASTNode(token, null));
@@ -48,10 +55,9 @@ public class Parser {
 
     // Winzig -> 'program' Name ':' Consts Types Dclns SubProgs Body Name '.' => "program"
     public static void procedureWinzig() throws OutOfOrderTokenException {
-        read(next());
         if (next().getType().equals(PredefinedTokenType.T_PROGRAM)) {
             procedureName();
-            assert next().getType().equals(PredefinedTokenType.T_COLON);
+            checkForOutOfOrderToken(next(), PredefinedTokenType.T_COLON);
             read(next());
             procedureConsts();
             procedureTypes();
@@ -59,7 +65,7 @@ public class Parser {
             procedureSubProgs();
             procedureBody();
             procedureName();
-            assert next().getType() == PredefinedTokenType.T_SINGLEDOT;
+            checkForOutOfOrderToken(next(), PredefinedTokenType.T_SINGLEDOT);
             read(next());
             buildTree(ASTTokenType.PROGRAM, 7);
         } else {
@@ -69,7 +75,7 @@ public class Parser {
 
     // Consts -> 'const' Const list ',' ';' => "consts"
     // Consts ->                            => "consts"
-    private static void procedureConsts() {
+    private static void procedureConsts() throws OutOfOrderTokenException {
         if(next().getType().equals(PredefinedTokenType.T_CONST)) {
             read(next());
             int n = 1;
@@ -79,7 +85,7 @@ public class Parser {
                 procedureConst();
                 n++;
             }
-            assert next().getType().equals(PredefinedTokenType.T_SEMICOLON);
+            checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
             read((next()));
             buildTree(ASTTokenType.CONSTS, n);
         } else {
@@ -88,9 +94,9 @@ public class Parser {
     }
 
     // Const -> Name '=' ConstValue => "const"
-    private static void procedureConst() {
+    private static void procedureConst() throws OutOfOrderTokenException {
         procedureName();
-        assert next().getType().equals(PredefinedTokenType.T_EQUAL);
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_EQUAL);
         read(next());
         procedureConstValue();
         buildTree(ASTTokenType.CONST, 2);
@@ -99,7 +105,7 @@ public class Parser {
     // ConstValue -> '<integer>'
     // ConstValue -> '<char>'
     // ConstValue -> Name
-    private static void procedureConstValue() {
+    private static void procedureConstValue() throws OutOfOrderTokenException {
         if(next().getType().equals(BasicTokenType.INTEGER)) {
             read((next()));
         } else if (next().getType().equals(BasicTokenType.CHAR)) {
@@ -111,15 +117,15 @@ public class Parser {
 
     // Types -> 'type' (Type ';')+      => "types"
     // Types ->                         => "types"
-    private static void procedureTypes() {
+    private static void procedureTypes() throws OutOfOrderTokenException {
         if(next().getType().equals(PredefinedTokenType.T_TYPE)) {
             int n =1;
             procedureType();
-            assert next().getType().equals(PredefinedTokenType.T_SEMICOLON);
+            checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
             read(next());
             while(next().getType().equals(BasicTokenType.IDENTIFIER)) {
                 procedureType();
-                assert next().getType().equals(PredefinedTokenType.T_SEMICOLON);
+                checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
                 read(next());
                 n++;
             }
@@ -130,18 +136,18 @@ public class Parser {
     }
 
     // Type -> Name '=' LitList => "type"
-    private static void procedureType() {
+    private static void procedureType() throws OutOfOrderTokenException {
         procedureName();
-        assert next().getType().equals(PredefinedTokenType.T_EQUAL);
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_EQUAL);
         read(next());
         procedureLitList();
         buildTree(ASTTokenType.TYPE, 2);
     }
 
     // LitList -> '(' Name list ',' ')' => "lit"
-    private static void procedureLitList() {
+    private static void procedureLitList() throws OutOfOrderTokenException {
         int n = 1;
-        assert next().getType().equals(PredefinedTokenType.T_OPENBRAC);
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_OPENBRAC);
         read(next());
         procedureName();
         while(next().getType().equals(PredefinedTokenType.T_COMMA)) {
@@ -149,7 +155,7 @@ public class Parser {
             procedureName();
             n++;
         }
-        assert next().getType().equals(PredefinedTokenType.T_CLOSEBRAC);
+        checkForOutOfOrderToken(next(), PredefinedTokenType.T_CLOSEBRAC);
         read(next());
         buildTree(ASTTokenType.LIT, n);
     }
@@ -175,8 +181,8 @@ public class Parser {
     }
 
     // Name -> '<identifier>'
-    public static void procedureName(){
-        assert next().getType().equals(BasicTokenType.IDENTIFIER);
+    public static void procedureName() throws OutOfOrderTokenException {
+        checkForOutOfOrderToken(next(), BasicTokenType.IDENTIFIER);
         read(next());
     }
 

@@ -67,12 +67,6 @@ public class Parser {
         }
     }
 
-    // Name -> '<identifier>'
-    public static void procedureName(){
-        assert next().getType().equals(BasicTokenType.IDENTIFIER);
-        read(next());
-    }
-
     // Consts -> 'const' Const list ',' ';' => "consts"
     // Consts ->                            => "consts"
     private static void procedureConsts() {
@@ -135,6 +129,7 @@ public class Parser {
         }
     }
 
+    // Type -> Name '=' LitList => "type"
     private static void procedureType() {
         procedureName();
         assert next().getType().equals(PredefinedTokenType.T_EQUAL);
@@ -143,17 +138,46 @@ public class Parser {
         buildTree(ASTTokenType.TYPE, 2);
     }
 
+    // LitList -> '(' Name list ',' ')' => "lit"
+    private static void procedureLitList() {
+        int n = 1;
+        assert next().getType().equals(PredefinedTokenType.T_OPENBRAC);
+        read(next());
+        procedureName();
+        while(next().getType().equals(PredefinedTokenType.T_COMMA)) {
+            read(next());
+            procedureName();
+            n++;
+        }
+        assert next().getType().equals(PredefinedTokenType.T_CLOSEBRAC);
+        read(next());
+        buildTree(ASTTokenType.LIT, n);
+    }
+
+    // SubProgs -> Fcn* => "subprogs"
+    private static void procedureSubProgs() {
+        int n = 0;
+        while(next().getType().equals(PredefinedTokenType.T_FUNCTION)) {
+            procedureFcn();
+            n++;
+        }
+        buildTree(ASTTokenType.SUBPROGS, n);
+    }
+
+    // Fcn -> 'function' Name '(' Params ')' ':' Name ';' Consts Types Dclns Body Name ';' => "fcn";
+    private static void procedureFcn() {
+    }
+
     private static void procedureBody() {
     }
 
-    private static void procedureLitList() {
-
-    }
-
-    private static void procedureSubProgs() {
-    }
-
     private static void procedureDclns() {
+    }
+
+    // Name -> '<identifier>'
+    public static void procedureName(){
+        assert next().getType().equals(BasicTokenType.IDENTIFIER);
+        read(next());
     }
 
     public static void parse(ArrayList<ScannerToken> tokens) throws OutOfOrderTokenOrderException {

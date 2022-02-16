@@ -6,6 +6,7 @@ public enum ASTTokenType implements TokenType {
     CONST,
     TYPES,
     TYPE,
+    LIT,
     LIST,
     SUBPROGS,
     FCN,

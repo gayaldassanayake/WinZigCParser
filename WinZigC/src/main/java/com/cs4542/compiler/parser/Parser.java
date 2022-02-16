@@ -1,6 +1,6 @@
 package com.cs4542.compiler.parser;
 
-import com.cs4542.compiler.exception.OutOfOrderTokenOrderException;
+import com.cs4542.compiler.exception.OutOfOrderTokenException;
 import com.cs4542.compiler.token.ASTToken;
 import com.cs4542.compiler.token.ScannerToken;
 import com.cs4542.compiler.token.tokentype.ASTTokenType;
@@ -47,7 +47,7 @@ public class Parser {
     }
 
     // Winzig -> 'program' Name ':' Consts Types Dclns SubProgs Body Name '.' => "program"
-    public static void procedureWinzig() throws OutOfOrderTokenOrderException {
+    public static void procedureWinzig() throws OutOfOrderTokenException {
         read(next());
         if (next().getType().equals(PredefinedTokenType.T_PROGRAM)) {
             procedureName();
@@ -63,7 +63,7 @@ public class Parser {
             read(next());
             buildTree(ASTTokenType.PROGRAM, 7);
         } else {
-            throw new OutOfOrderTokenOrderException(next());
+            throw new OutOfOrderTokenException(next());
         }
     }
 
@@ -180,7 +180,7 @@ public class Parser {
         read(next());
     }
 
-    public static void parse(ArrayList<ScannerToken> tokens) throws OutOfOrderTokenOrderException {
+    public static void parse(ArrayList<ScannerToken> tokens) throws OutOfOrderTokenException {
         Parser.tokens = tokens;
         procedureWinzig();
     }

@@ -102,19 +102,58 @@ public class Parser {
         buildTree(ASTTokenType.CONST, 2);
     }
 
+    // ConstValue -> '<integer>'
+    // ConstValue -> '<char>'
+    // ConstValue -> Name
     private static void procedureConstValue() {
+        if(next().getType().equals(BasicTokenType.INTEGER)) {
+            read((next()));
+        } else if (next().getType().equals(BasicTokenType.CHAR)) {
+            read((next()));
+        } else {
+            procedureName();
+        }
+    }
+
+    // Types -> 'type' (Type ';')+      => "types"
+    // Types ->                         => "types"
+    private static void procedureTypes() {
+        if(next().getType().equals(PredefinedTokenType.T_TYPE)) {
+            int n =1;
+            procedureType();
+            assert next().getType().equals(PredefinedTokenType.T_SEMICOLON);
+            read(next());
+            while(next().getType().equals(BasicTokenType.IDENTIFIER)) {
+                procedureType();
+                assert next().getType().equals(PredefinedTokenType.T_SEMICOLON);
+                read(next());
+                n++;
+            }
+            buildTree(ASTTokenType.TYPES, n);
+        } else {
+            buildTree(ASTTokenType.TYPES, 0);
+        }
+    }
+
+    private static void procedureType() {
+        procedureName();
+        assert next().getType().equals(PredefinedTokenType.T_EQUAL);
+        read(next());
+        procedureLitList();
+        buildTree(ASTTokenType.TYPE, 2);
     }
 
     private static void procedureBody() {
+    }
+
+    private static void procedureLitList() {
+
     }
 
     private static void procedureSubProgs() {
     }
 
     private static void procedureDclns() {
-    }
-
-    private static void procedureTypes() {
     }
 
     public static void parse(ArrayList<ScannerToken> tokens) throws OutOfOrderTokenOrderException {

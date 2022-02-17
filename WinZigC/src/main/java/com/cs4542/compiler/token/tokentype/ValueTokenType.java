@@ -1,6 +1,6 @@
 package com.cs4542.compiler.token.tokentype;
 
-public enum BasicTokenType implements ScannerTokenType {
+public enum ValueTokenType implements ScannerTokenType {
     WHITESPACE,
     NEWLINE,
     IDENTIFIER,

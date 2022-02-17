@@ -1,6 +1,5 @@
 package com.cs4542.compiler.util;
 
-import com.cs4542.compiler.token.Token;
 import com.cs4542.compiler.token.ScannerToken;
 
 import java.io.FileWriter;
@@ -61,5 +60,14 @@ public class Util {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String buildRepeatedCharString(char c, int n) {
+        StringBuilder outputBuffer = new StringBuilder(2*n);
+        for (int i = 0; i < n; i++){
+            outputBuffer.append(c);
+            outputBuffer.append(" ");
+        }
+        return outputBuffer.toString();
     }
 }

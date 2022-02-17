@@ -1,8 +1,6 @@
 package com.cs4542.compiler.token;
 
-
-
-import com.cs4542.compiler.exception.InvalidBasicTokenTypeException;
+import com.cs4542.compiler.exception.InvalidTokenTypeException;
 import com.cs4542.compiler.token.tokentype.ValueTokenType;
 
 import java.util.HashMap;
@@ -19,14 +17,14 @@ public class BasicToken implements Token {
         typeValueMap.put(ValueTokenType.STRING, "<string>");
     }
 
-    private String setValue(ValueTokenType type) throws InvalidBasicTokenTypeException {
+    private String setValue(ValueTokenType type) throws InvalidTokenTypeException {
         if(!typeValueMap.containsKey(type)) {
-            throw new InvalidBasicTokenTypeException(type);
+            throw new InvalidTokenTypeException(type);
         }
         return typeValueMap.get(type);
     }
 
-    public BasicToken(ValueTokenType type) throws InvalidBasicTokenTypeException {
+    public BasicToken(ValueTokenType type) throws InvalidTokenTypeException {
         this.type = type;
         this.value = setValue(type);
     }

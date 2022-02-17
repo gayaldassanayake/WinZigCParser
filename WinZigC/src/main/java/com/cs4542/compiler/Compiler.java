@@ -1,5 +1,6 @@
 package com.cs4542.compiler;
 
+import com.cs4542.compiler.exception.InvalidTokenTypeException;
 import com.cs4542.compiler.exception.OutOfOrderTokenException;
 import com.cs4542.compiler.lex.Scanner;
 import com.cs4542.compiler.lex.Screener;
@@ -23,7 +24,8 @@ public class Compiler {
             ArrayList<ScannerToken> scannerTokens = Scanner.scan(program);
             ArrayList<ScannerToken> screenerTokens = Screener.screen(scannerTokens);
             Parser.parse(screenerTokens);
-        } catch (FileNotFoundException | InvalidTokenException | OutOfOrderTokenException e) {
+        } catch (FileNotFoundException | InvalidTokenException |
+                OutOfOrderTokenException | InvalidTokenTypeException e) {
             e.printStackTrace();
         }
     }

@@ -30,4 +30,8 @@ public class ASTNode {
     public void addChild(ASTNode child) {
         children.add(child);
     }
+
+    public ArrayList<ASTNode> getChildren() {
+        return children;
+    }
 }

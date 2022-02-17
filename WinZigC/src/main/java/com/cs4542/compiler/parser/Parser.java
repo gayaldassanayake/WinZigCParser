@@ -1,10 +1,12 @@
 package com.cs4542.compiler.parser;
 
+import com.cs4542.compiler.exception.InvalidBasicTokenTypeException;
 import com.cs4542.compiler.exception.OutOfOrderTokenException;
 import com.cs4542.compiler.token.ASTToken;
+import com.cs4542.compiler.token.BasicToken;
 import com.cs4542.compiler.token.ScannerToken;
 import com.cs4542.compiler.token.tokentype.ASTTokenType;
-import com.cs4542.compiler.token.tokentype.BasicTokenType;
+import com.cs4542.compiler.token.tokentype.ValueTokenType;
 import com.cs4542.compiler.token.tokentype.PredefinedTokenType;
 import com.cs4542.compiler.token.tokentype.ScannerTokenType;
 
@@ -36,9 +38,12 @@ public class Parser {
         }
     }
 
-    private static void read(ScannerToken token) {
-        if(token.getType() instanceof BasicTokenType) {
-            stack.push(new ASTNode(token, null));
+    private static void read(ScannerToken token) throws InvalidBasicTokenTypeException {
+        if(token.getType() instanceof ValueTokenType) {
+            ASTNode basicToken = new ASTNode(new BasicToken((ValueTokenType) token.getType()), null);
+            ASTNode valueToken = new ASTNode(token, basicToken);
+            basicToken.addChild(valueToken);
+            stack.push(basicToken);
         }
         readPointer++;
     }
@@ -54,7 +59,7 @@ public class Parser {
     }
 
     // Winzig -> 'program' Name ':' Consts Types Dclns SubProgs Body Name '.' => "program"
-    public static void procedureWinzig() throws OutOfOrderTokenException {
+    public static void procedureWinzig() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         if (next().getType().equals(PredefinedTokenType.T_PROGRAM)) {
             procedureName();
             checkForOutOfOrderToken(next(), PredefinedTokenType.T_COLON);
@@ -75,7 +80,7 @@ public class Parser {
 
     // Consts -> 'const' Const list ',' ';' => "consts"
     // Consts ->                            => "consts"
-    private static void procedureConsts() throws OutOfOrderTokenException {
+    private static void procedureConsts() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         if(next().getType().equals(PredefinedTokenType.T_CONST)) {
             read(next());
             int n = 1;
@@ -94,7 +99,7 @@ public class Parser {
     }
 
     // Const -> Name '=' ConstValue => "const"
-    private static void procedureConst() throws OutOfOrderTokenException {
+    private static void procedureConst() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         procedureName();
         checkForOutOfOrderToken(next(), PredefinedTokenType.T_EQUAL);
         read(next());
@@ -105,10 +110,10 @@ public class Parser {
     // ConstValue -> '<integer>'
     // ConstValue -> '<char>'
     // ConstValue -> Name
-    private static void procedureConstValue() throws OutOfOrderTokenException {
-        if(next().getType().equals(BasicTokenType.INTEGER)) {
+    private static void procedureConstValue() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
+        if(next().getType().equals(ValueTokenType.INTEGER)) {
             read((next()));
-        } else if (next().getType().equals(BasicTokenType.CHAR)) {
+        } else if (next().getType().equals(ValueTokenType.CHAR)) {
             read((next()));
         } else {
             procedureName();
@@ -117,13 +122,13 @@ public class Parser {
 
     // Types -> 'type' (Type ';')+      => "types"
     // Types ->                         => "types"
-    private static void procedureTypes() throws OutOfOrderTokenException {
+    private static void procedureTypes() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         if(next().getType().equals(PredefinedTokenType.T_TYPE)) {
             int n =1;
             procedureType();
             checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
             read(next());
-            while(next().getType().equals(BasicTokenType.IDENTIFIER)) {
+            while(next().getType().equals(ValueTokenType.IDENTIFIER)) {
                 procedureType();
                 checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
                 read(next());
@@ -136,7 +141,7 @@ public class Parser {
     }
 
     // Type -> Name '=' LitList => "type"
-    private static void procedureType() throws OutOfOrderTokenException {
+    private static void procedureType() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         procedureName();
         checkForOutOfOrderToken(next(), PredefinedTokenType.T_EQUAL);
         read(next());
@@ -145,7 +150,7 @@ public class Parser {
     }
 
     // LitList -> '(' Name list ',' ')' => "lit"
-    private static void procedureLitList() throws OutOfOrderTokenException {
+    private static void procedureLitList() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         int n = 1;
         checkForOutOfOrderToken(next(), PredefinedTokenType.T_OPENBRAC);
         read(next());
@@ -161,7 +166,7 @@ public class Parser {
     }
 
     // SubProgs -> Fcn* => "subprogs"
-    private static void procedureSubProgs() throws OutOfOrderTokenException {
+    private static void procedureSubProgs() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         int n = 0;
         while(next().getType().equals(PredefinedTokenType.T_FUNCTION)) {
             procedureFcn();
@@ -171,7 +176,7 @@ public class Parser {
     }
 
     // Fcn -> 'function' Name '(' Params ')' ':' Name ';' Consts Types Dclns Body Name ';' => "fcn";
-    private static void procedureFcn() throws OutOfOrderTokenException {
+    private static void procedureFcn() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         checkForOutOfOrderToken(next(), PredefinedTokenType.T_FUNCTION);
         read(next());
         procedureName();
@@ -197,7 +202,7 @@ public class Parser {
     }
 
     // Params -> Dcln list ';' => "params";
-    private static void procedureParams() throws OutOfOrderTokenException {
+    private static void procedureParams() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         int n = 1;
         procedureDclns();
         while(next().getType().equals(PredefinedTokenType.T_SEMICOLON)) {
@@ -210,7 +215,7 @@ public class Parser {
 
     // Dclns -> 'var' (Dcln ';')+       => "dclns"
     // Dclns ->                         => "dclns"
-    private static void procedureDclns() throws OutOfOrderTokenException {
+    private static void procedureDclns() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         if(next().getType().equals(PredefinedTokenType.T_VAR)) {
             checkForOutOfOrderToken(next(), PredefinedTokenType.T_VAR);
             read(next());
@@ -219,7 +224,7 @@ public class Parser {
             procedureDcln();
             checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
             read(next());
-            while(next().getType().equals(BasicTokenType.IDENTIFIER)) {
+            while(next().getType().equals(ValueTokenType.IDENTIFIER)) {
                 procedureDcln();
                 checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
                 read(next());
@@ -232,7 +237,7 @@ public class Parser {
     }
 
     // Dcln -> Name list ',' ':' Name => "var";
-    private static void procedureDcln() throws OutOfOrderTokenException {
+    private static void procedureDcln() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
         int n = 2;
         procedureName();
         while(next().getType().equals(PredefinedTokenType.T_COMMA)) {
@@ -365,12 +370,17 @@ public class Parser {
     }
 
     // Name -> '<identifier>'
-    public static void procedureName() throws OutOfOrderTokenException {
-        checkForOutOfOrderToken(next(), BasicTokenType.IDENTIFIER);
+    private static void procedureName() throws OutOfOrderTokenException, InvalidBasicTokenTypeException {
+        checkForOutOfOrderToken(next(), ValueTokenType.IDENTIFIER);
         read(next());
     }
 
-    public static void parse(ArrayList<ScannerToken> tokens) throws OutOfOrderTokenException {
+    public static void printAST(ASTNode head) {
+
+    }
+
+    public static void parse(ArrayList<ScannerToken> tokens) throws OutOfOrderTokenException,
+            InvalidBasicTokenTypeException {
         Parser.tokens = tokens;
         procedureWinzig();
     }

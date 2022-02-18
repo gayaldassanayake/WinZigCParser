@@ -19,7 +19,9 @@ public class Scanner {
         for (String token: predefinedTokens.keySet()) {
             int tokenSize = token.length();
             if(readPointer+tokenSize<=program.length() &&
-                    program.substring(readPointer, readPointer+tokenSize).equals(token)) {
+                    program.substring(readPointer, readPointer+tokenSize).equals(token) &&
+                    (!isIdentifierHead(program.charAt(readPointer)) ||
+                            !isIdentifierTail(program.charAt(readPointer+tokenSize)))) {
                 return true;
             }
         }

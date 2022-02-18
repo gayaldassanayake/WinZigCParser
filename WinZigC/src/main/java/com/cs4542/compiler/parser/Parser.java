@@ -55,8 +55,13 @@ public class Parser {
 
     private static void buildTree(ASTTokenType astTokenType, int n) throws InvalidTokenTypeException {
         ASTNode headNode = new ASTNode(new ASTToken(astTokenType), null);
+        Stack<ASTNode> reverseStack = new Stack<>();
         for(int i=0; i< n; i++) {
-            ASTNode childNode = stack.pop();
+            // to avoid reversing the order of children in parent node
+            reverseStack.push(stack.pop());
+        }
+        for(int i=0; i<n; i++) {
+            ASTNode childNode = reverseStack.pop();
             childNode.setParent(headNode);
             headNode.addChild(childNode);
         }
@@ -66,6 +71,7 @@ public class Parser {
     // Winzig -> 'program' Name ':' Consts Types Dclns SubProgs Body Name '.' => "program"
     public static void procedureWinzig() throws OutOfOrderTokenException, InvalidTokenTypeException {
         if (next().getType().equals(PredefinedTokenType.T_PROGRAM)) {
+            read(next());
             procedureName();
             read(next(), PredefinedTokenType.T_COLON);
             procedureConsts();
@@ -184,7 +190,6 @@ public class Parser {
         procedureConsts();
         procedureTypes();
         procedureDclns();
-        procedureDclns();
         procedureBody();
         procedureName();
         read(next(), PredefinedTokenType.T_SEMICOLON);
@@ -194,10 +199,10 @@ public class Parser {
     // Params -> Dcln list ';' => "params";
     private static void procedureParams() throws OutOfOrderTokenException, InvalidTokenTypeException {
         int n = 1;
-        procedureDclns();
+        procedureDcln();
         while(next().getType().equals(PredefinedTokenType.T_SEMICOLON)) {
             read(next());
-            procedureDclns();
+            procedureDcln();
             n++;
         }
         buildTree(ASTTokenType.PARAMS, n);
@@ -207,8 +212,7 @@ public class Parser {
     // Dclns ->                         => "dclns"
     private static void procedureDclns() throws OutOfOrderTokenException, InvalidTokenTypeException {
         if(next().getType().equals(PredefinedTokenType.T_VAR)) {
-            read(next(), PredefinedTokenType.T_VAR);
-
+            read(next());
             int n = 1;
             procedureDcln();
             read(next(), PredefinedTokenType.T_SEMICOLON);

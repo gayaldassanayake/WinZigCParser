@@ -99,6 +99,8 @@ public class Util {
                 return ASTTokenType.LT;
             case T_GTE:
                 return ASTTokenType.GTE;
+            case T_GT:
+                return ASTTokenType.GT;
             case T_EQUAL:
                 return ASTTokenType.EQUAL;
             case T_NE:

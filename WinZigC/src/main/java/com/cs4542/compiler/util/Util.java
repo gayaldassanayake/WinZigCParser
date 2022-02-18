@@ -1,6 +1,9 @@
 package com.cs4542.compiler.util;
 
+import com.cs4542.compiler.exception.InvalidTokenTypeException;
 import com.cs4542.compiler.token.ScannerToken;
+import com.cs4542.compiler.token.tokentype.ASTTokenType;
+import com.cs4542.compiler.token.tokentype.PredefinedTokenType;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -69,5 +72,47 @@ public class Util {
             outputBuffer.append(" ");
         }
         return outputBuffer.toString();
+    }
+
+    public static ASTTokenType getASTTypeForPredefType(PredefinedTokenType predefType)
+            throws InvalidTokenTypeException {
+        switch (predefType) {
+            case T_PLUS:
+                return ASTTokenType.PLUS;
+            case T_MINUS:
+                return ASTTokenType.MINUS;
+            case T_MULTIPLY:
+                return ASTTokenType.MULTIPLY;
+            case T_DIVIDE:
+                return ASTTokenType.DIVIDE;
+            case T_OR:
+                return ASTTokenType.OR;
+            case T_AND:
+                return ASTTokenType.AND;
+            case T_NOT:
+                return ASTTokenType.NOT;
+            case T_MOD:
+                return ASTTokenType.MOD;
+            case T_LTE:
+                return ASTTokenType.LTE;
+            case T_LT:
+                return ASTTokenType.LT;
+            case T_GTE:
+                return ASTTokenType.GTE;
+            case T_EQUAL:
+                return ASTTokenType.EQUAL;
+            case T_NE:
+                return ASTTokenType.NOTEQUAL;
+            case T_SUCC:
+                return ASTTokenType.SUCC;
+            case T_PRED:
+                return ASTTokenType.PRED;
+            case T_CHR:
+                return ASTTokenType.CHR;
+            case T_ORD:
+                return ASTTokenType.ORD;
+            default:
+                throw new InvalidTokenTypeException(predefType);
+        }
     }
 }

@@ -12,6 +12,8 @@ import com.cs4542.compiler.token.tokentype.ScannerTokenType;
 import com.cs4542.compiler.util.Util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 public class Parser {
@@ -33,12 +35,6 @@ public class Parser {
         return tokens.get(readPointer);
     }
 
-    private static void checkForOutOfOrderToken(ScannerToken token, ScannerTokenType type) throws OutOfOrderTokenException {
-        if(!token.getType().equals(type)) {
-            throw new OutOfOrderTokenException(token);
-        }
-    }
-
     private static void read(ScannerToken token) throws InvalidTokenTypeException {
         if(token.getType() instanceof ValueTokenType) {
             ASTNode basicToken = new ASTNode(new BasicToken((ValueTokenType) token.getType()), null);
@@ -47,6 +43,14 @@ public class Parser {
             stack.push(basicToken);
         }
         readPointer++;
+    }
+
+    private static void read(ScannerToken token, ScannerTokenType type)
+            throws OutOfOrderTokenException, InvalidTokenTypeException {
+        if(!token.getType().equals(type)) {
+            throw new OutOfOrderTokenException(token);
+        }
+        read(token);
     }
 
     private static void buildTree(ASTTokenType astTokenType, int n) throws InvalidTokenTypeException {
@@ -63,16 +67,14 @@ public class Parser {
     public static void procedureWinzig() throws OutOfOrderTokenException, InvalidTokenTypeException {
         if (next().getType().equals(PredefinedTokenType.T_PROGRAM)) {
             procedureName();
-            checkForOutOfOrderToken(next(), PredefinedTokenType.T_COLON);
-            read(next());
+            read(next(), PredefinedTokenType.T_COLON);
             procedureConsts();
             procedureTypes();
             procedureDclns();
             procedureSubProgs();
             procedureBody();
             procedureName();
-            checkForOutOfOrderToken(next(), PredefinedTokenType.T_SINGLEDOT);
-            read(next());
+            read(next(), PredefinedTokenType.T_SINGLEDOT);
             buildTree(ASTTokenType.PROGRAM, 7);
         } else {
             throw new OutOfOrderTokenException(next());
@@ -91,8 +93,7 @@ public class Parser {
                 procedureConst();
                 n++;
             }
-            checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
-            read((next()));
+            read(next(), PredefinedTokenType.T_SEMICOLON);
             buildTree(ASTTokenType.CONSTS, n);
         } else {
             buildTree(ASTTokenType.CONSTS, 0);
@@ -102,8 +103,7 @@ public class Parser {
     // Const -> Name '=' ConstValue => "const"
     private static void procedureConst() throws OutOfOrderTokenException, InvalidTokenTypeException {
         procedureName();
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_EQUAL);
-        read(next());
+        read(next(), PredefinedTokenType.T_EQUAL);
         procedureConstValue();
         buildTree(ASTTokenType.CONST, 2);
     }
@@ -127,12 +127,10 @@ public class Parser {
         if(next().getType().equals(PredefinedTokenType.T_TYPE)) {
             int n =1;
             procedureType();
-            checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
-            read(next());
+            read(next(), PredefinedTokenType.T_SEMICOLON);
             while(next().getType().equals(ValueTokenType.IDENTIFIER)) {
                 procedureType();
-                checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
-                read(next());
+                read(next(), PredefinedTokenType.T_SEMICOLON);
                 n++;
             }
             buildTree(ASTTokenType.TYPES, n);
@@ -144,8 +142,7 @@ public class Parser {
     // Type -> Name '=' LitList => "type"
     private static void procedureType() throws OutOfOrderTokenException, InvalidTokenTypeException {
         procedureName();
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_EQUAL);
-        read(next());
+        read(next(), PredefinedTokenType.T_EQUAL);
         procedureLitList();
         buildTree(ASTTokenType.TYPE, 2);
     }
@@ -153,16 +150,14 @@ public class Parser {
     // LitList -> '(' Name list ',' ')' => "lit"
     private static void procedureLitList() throws OutOfOrderTokenException, InvalidTokenTypeException {
         int n = 1;
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_OPENBRAC);
-        read(next());
+        read(next(), PredefinedTokenType.T_OPENBRAC);
         procedureName();
         while(next().getType().equals(PredefinedTokenType.T_COMMA)) {
             read(next());
             procedureName();
             n++;
         }
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_CLOSEBRAC);
-        read(next());
+        read(next(), PredefinedTokenType.T_CLOSEBRAC);
         buildTree(ASTTokenType.LIT, n);
     }
 
@@ -178,27 +173,21 @@ public class Parser {
 
     // Fcn -> 'function' Name '(' Params ')' ':' Name ';' Consts Types Dclns Body Name ';' => "fcn";
     private static void procedureFcn() throws OutOfOrderTokenException, InvalidTokenTypeException {
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_FUNCTION);
-        read(next());
+        read(next(), PredefinedTokenType.T_FUNCTION);
         procedureName();
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_OPENBRAC);
-        read(next());
+        read(next(), PredefinedTokenType.T_OPENBRAC);
         procedureParams();
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_CLOSEBRAC);
-        read(next());
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_COLON);
-        read(next());
+        read(next(), PredefinedTokenType.T_CLOSEBRAC);
+        read(next(), PredefinedTokenType.T_COLON);
         procedureName();
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
-        read(next());
+        read(next(), PredefinedTokenType.T_SEMICOLON);
         procedureConsts();
         procedureTypes();
         procedureDclns();
         procedureDclns();
         procedureBody();
         procedureName();
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
-        read(next());
+        read(next(), PredefinedTokenType.T_SEMICOLON);
         buildTree(ASTTokenType.FCN, 8);
     }
 
@@ -218,17 +207,14 @@ public class Parser {
     // Dclns ->                         => "dclns"
     private static void procedureDclns() throws OutOfOrderTokenException, InvalidTokenTypeException {
         if(next().getType().equals(PredefinedTokenType.T_VAR)) {
-            checkForOutOfOrderToken(next(), PredefinedTokenType.T_VAR);
-            read(next());
+            read(next(), PredefinedTokenType.T_VAR);
 
             int n = 1;
             procedureDcln();
-            checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
-            read(next());
+            read(next(), PredefinedTokenType.T_SEMICOLON);
             while(next().getType().equals(ValueTokenType.IDENTIFIER)) {
                 procedureDcln();
-                checkForOutOfOrderToken(next(), PredefinedTokenType.T_SEMICOLON);
-                read(next());
+                read(next(), PredefinedTokenType.T_SEMICOLON);
                 n++;
             }
             buildTree(ASTTokenType.DCLNS, n);
@@ -246,15 +232,23 @@ public class Parser {
             procedureName();
             n++;
         }
-        checkForOutOfOrderToken(next(), PredefinedTokenType.T_COLON);
-        read(next());
+        read(next(), PredefinedTokenType.T_COLON);
         procedureName();
         buildTree(ASTTokenType.VAR, n);
     }
 
     // Body -> 'begin' Statement list ';' 'end' => "block";
-    private static void procedureBody() {
-
+    private static void procedureBody() throws OutOfOrderTokenException, InvalidTokenTypeException {
+        int n = 1;
+        read(next(), PredefinedTokenType.T_BEGIN);
+        procedureStatement();
+        while (next().getType().equals(PredefinedTokenType.T_SEMICOLON)) {
+            read(next());
+            procedureStatement();
+            n++;
+        }
+        read(next(), PredefinedTokenType.T_END);
+        buildTree(ASTTokenType.BLOCK, n);
     }
 
     // Statement -> Assignment
@@ -270,59 +264,231 @@ public class Parser {
     // Statement -> 'return' Expression                                         => "return"
     // Statement -> Body
     // Statement ->                                                             => "<null>"
-    private static void procedureStatement() {
-
+    private static void procedureStatement() throws InvalidTokenTypeException, OutOfOrderTokenException {
+        ScannerTokenType type = next().getType();
+        if(type.equals(ValueTokenType.IDENTIFIER)) {
+            // Assignment
+            procedureAssignment();
+        } else if(type.equals(PredefinedTokenType.T_OUTPUT)) {
+            // output
+            int n = 1;
+            read(next());
+            read(next(), PredefinedTokenType.T_OPENBRAC);
+            procedureOutExp();
+            while (next().getType().equals(PredefinedTokenType.T_COMMA)) {
+                read(next());
+                procedureOutExp();
+                n++;
+            }
+            read(next(), PredefinedTokenType.T_CLOSEBRAC);
+            buildTree(ASTTokenType.OUTPUT, n);
+        } else if(type.equals(PredefinedTokenType.T_IF)) {
+            // if
+            int n = 2;
+            read(next());
+            procedureExpression();
+            read(next(), PredefinedTokenType.T_THEN);
+            procedureStatement();
+            if(next().getType().equals(PredefinedTokenType.T_ELSE)) {
+                read(next());
+                procedureStatement();
+                n++;
+            }
+            buildTree(ASTTokenType.IF, n);
+        } else if(type.equals(PredefinedTokenType.T_WHILE)) {
+            // while
+            read(next());
+            procedureExpression();
+            read(next(), PredefinedTokenType.T_DO);
+            procedureStatement();
+            buildTree(ASTTokenType.WHILE, 2);
+        } else if(type.equals(PredefinedTokenType.T_REPEAT)) {
+            // repeat
+            int n = 2;
+            read(next());
+            procedureStatement();
+            while(next().getType().equals(PredefinedTokenType.T_SEMICOLON)) {
+                read(next());
+                procedureStatement();
+                n++;
+            }
+            read(next(), PredefinedTokenType.T_UNTIL);
+            procedureExpression();
+            buildTree(ASTTokenType.REPEAT, n);
+        } else if(type.equals(PredefinedTokenType.T_FOR)) {
+            // for
+            read(next());
+            read(next(), PredefinedTokenType.T_OPENBRAC);
+            procedureForStat();
+            read(next(), PredefinedTokenType.T_SEMICOLON);
+            procedureForExp();
+            read(next(), PredefinedTokenType.T_SEMICOLON);
+            procedureForStat();
+            read(next(), PredefinedTokenType.T_CLOSEBRAC);
+            procedureStatement();
+            buildTree(ASTTokenType.FOR, 4);
+        } else if(type.equals(PredefinedTokenType.T_LOOP)) {
+            // loop
+            int n = 1;
+            read(next());
+            procedureStatement();
+            while(next().getType().equals(PredefinedTokenType.T_SEMICOLON)) {
+                read(next());
+                procedureStatement();
+                n++;
+            }
+            read(next(), PredefinedTokenType.T_POOL);
+            buildTree(ASTTokenType.LOOP, n);
+        } else if(type.equals(PredefinedTokenType.T_CASE)) {
+            // case
+            read(next());
+            procedureExpression();
+            read(next(), PredefinedTokenType.T_OF);
+            procedureCaseclauses();
+            procedureOtherwiseClause();
+            read(next(), PredefinedTokenType.T_END);
+            buildTree(ASTTokenType.CASE, 3);
+        } else if(type.equals(PredefinedTokenType.T_READ)) {
+            // read
+            int n = 1;
+            read(next());
+            read(next(), PredefinedTokenType.T_OPENBRAC);
+            procedureName();
+            while(next().getType().equals(PredefinedTokenType.T_COMMA)) {
+                read(next());
+                procedureName();
+                n++;
+            }
+            read(next(), PredefinedTokenType.T_CLOSEBRAC);
+            buildTree(ASTTokenType.READ, n);
+        } else if(type.equals(PredefinedTokenType.T_EXIT)) {
+            // exit
+            read(next());
+            buildTree(ASTTokenType.EXIT, 0);
+        } else if(type.equals(PredefinedTokenType.T_RETURN)) {
+            // return
+            read(next());
+            procedureExpression();
+            buildTree(ASTTokenType.RETURN, 1);
+        } else if(type.equals(PredefinedTokenType.T_BEGIN)) {
+            // Body
+            procedureBody();
+        } else {
+            buildTree(ASTTokenType.NULL, 0);
+        }
     }
 
     // OutExp -> Expression     => "integer"
     // OutExp -> StringNode     => "string";
-    private static void procedureOutExp() {
-
+    private static void procedureOutExp() throws InvalidTokenTypeException, OutOfOrderTokenException {
+        if(next().getType().equals(ValueTokenType.STRING)) {
+            procedureStringNode();
+            buildTree(ASTTokenType.STRING, 1);
+        } else {
+            procedureExpression();
+            buildTree(ASTTokenType.INTEGER, 1);
+        }
     }
 
     // StringNode -> '<string>'
-    private static void procedureStringNode() {
-
+    private static void procedureStringNode() throws OutOfOrderTokenException, InvalidTokenTypeException {
+        read(next(), ValueTokenType.STRING);
     }
 
     // Caseclauses-> (Caseclause ';')+
-    private static void procedureCaseclauses() {
-
+    private static void procedureCaseclauses() throws OutOfOrderTokenException, InvalidTokenTypeException {
+        procedureCaseclause();
+        read(next(), PredefinedTokenType.T_SEMICOLON);
+        ScannerTokenType type = next().getType();
+        while (type.equals(ValueTokenType.INTEGER) || type.equals(ValueTokenType.CHAR) ||
+                type.equals(ValueTokenType.IDENTIFIER)) {
+            procedureCaseclause();
+            read(next(), PredefinedTokenType.T_SEMICOLON);
+            type = next().getType();
+        }
     }
 
     // Caseclause -> CaseExpression list ',' ':' Statement  => "case_clause"
-    private static void procedureCaseclause() {
-
+    private static void procedureCaseclause() throws InvalidTokenTypeException, OutOfOrderTokenException {
+        int n = 2;
+        procedureCaseExpression();
+        while (next().getType().equals(PredefinedTokenType.T_COMMA)) {
+            read(next());
+            procedureCaseExpression();
+            n++;
+        }
+        read(next(), PredefinedTokenType.T_COLON);
+        procedureStatement();
+        buildTree(ASTTokenType.CASE_CLAUSE, n);
     }
 
     // CaseExpression -> ConstValue
     // CaseExpression -> ConstValue '..' ConstValue     => "..";
-    private static void procedureCaseExpression() {
-
+    private static void procedureCaseExpression() throws OutOfOrderTokenException, InvalidTokenTypeException {
+        procedureConstValue();
+        if(next().getType().equals(PredefinedTokenType.T_DOTS)) {
+            read(next());
+            procedureConstValue();
+            buildTree(ASTTokenType.DOUBLE_DOT, 2);
+        }
     }
 
     // OtherwiseClause -> 'otherwise' Statement         => "otherwise"
     // OtherwiseClause ->
-    private static void procedureOtherwiseClause() {
-
+    private static void procedureOtherwiseClause() throws InvalidTokenTypeException, OutOfOrderTokenException {
+        if(next().getType().equals(PredefinedTokenType.T_OTHERWISE)) {
+            read(next());
+            procedureStatement();
+            buildTree(ASTTokenType.OTHERWISE, 1);
+        }
     }
 
     // Assignment -> Name ':=' Expression               => "assign"
     // Assignment -> Name ':=:' Name                    => "swap";
-    private static void procedureAssignment() {
-
+    private static void procedureAssignment() throws OutOfOrderTokenException, InvalidTokenTypeException {
+        procedureName();
+        if(next().getType().equals(PredefinedTokenType.T_ASSIGN)) {
+            read(next());
+            procedureExpression();
+            buildTree(ASTTokenType.ASSIGN, 2);
+        } else {
+            read(next(), PredefinedTokenType.T_SWAP);
+            procedureName();
+            buildTree(ASTTokenType.SWAP, 2);
+        }
     }
 
     // ForStat -> Assignment
     // ForStat ->               => "<null>"
-    private static void procedureForStat() {
-
+    private static void procedureForStat() throws OutOfOrderTokenException, InvalidTokenTypeException {
+        if(next().getType().equals(ValueTokenType.IDENTIFIER)) {
+            procedureAssignment();
+        } else {
+            buildTree(ASTTokenType.NULL, 0);
+        }
     }
 
     // ForExp -> Expression
     // ForExp ->                => "true";
-    private static void procedureForExp() {
+    private static void procedureForExp() throws InvalidTokenTypeException, OutOfOrderTokenException {
+        Set<ScannerTokenType> firstSet = new HashSet<>();
+        firstSet.add(PredefinedTokenType.T_MINUS);
+        firstSet.add(PredefinedTokenType.T_PLUS);
+        firstSet.add(PredefinedTokenType.T_NOT);
+        firstSet.add(ValueTokenType.IDENTIFIER);
+        firstSet.add(ValueTokenType.INTEGER);
+        firstSet.add(ValueTokenType.CHAR);
+        firstSet.add(PredefinedTokenType.T_OPENBRAC);
+        firstSet.add(PredefinedTokenType.T_SUCC);
+        firstSet.add(PredefinedTokenType.T_PRED);
+        firstSet.add(PredefinedTokenType.T_CHR);
+        firstSet.add(PredefinedTokenType.T_ORD);
 
+        if(firstSet.contains(next().getType())) {
+            procedureExpression();
+        } else {
+            buildTree(ASTTokenType.TRUE, 0);
+        }
     }
 
     // Expression -> Term
@@ -332,16 +498,34 @@ public class Parser {
     // Expression -> Term '>' Term      => ">"
     // Expression -> Term '=' Term      => "="
     // Expression -> Term '<>' Term     => "<>"
-    private static void procedureExpression() {
-
+    private static void procedureExpression() throws InvalidTokenTypeException, OutOfOrderTokenException {
+        procedureTerm();
+        ScannerTokenType type = next().getType();
+        if(type.equals(PredefinedTokenType.T_LTE) || type.equals(PredefinedTokenType.T_LT) ||
+                type.equals(PredefinedTokenType.T_GTE) || type.equals(PredefinedTokenType.T_GT) ||
+                type.equals(PredefinedTokenType.T_EQUAL) || type.equals(PredefinedTokenType.T_NE) ) {
+            read(next());
+            procedureTerm();
+            ASTTokenType astTokenType = Util.getASTTypeForPredefType((PredefinedTokenType) type);
+            buildTree(astTokenType, 2);
+        }
     }
 
     // Term -> Factor
     // Term -> Term '+' Factor      => "+"
     // Term -> Term '-' Factor      => "-"
     // Term -> Term 'or' Factor     => "or"
-    private static void procedureTerm() {
-
+    private static void procedureTerm() throws InvalidTokenTypeException, OutOfOrderTokenException {
+        procedureFactor();
+        ScannerTokenType type = next().getType();
+        while(type.equals(PredefinedTokenType.T_PLUS) || type.equals(PredefinedTokenType.T_MINUS) ||
+                type.equals(PredefinedTokenType.T_OR)) {
+            read(next());
+            procedureFactor();
+            ASTTokenType astTokenType = Util.getASTTypeForPredefType((PredefinedTokenType) type);
+            buildTree(astTokenType, 2);
+            type = next().getType();
+        }
     }
 
     // Factor -> Factor '*' Primary    => "*"
@@ -349,8 +533,17 @@ public class Parser {
     // Factor -> Factor 'and' Primary  => "and"
     // Factor -> Factor 'mod' Primary  => "mod"
     // Factor -> Primary;
-    private static void procedureFactor() {
-
+    private static void procedureFactor() throws InvalidTokenTypeException, OutOfOrderTokenException {
+        procedurePrimary();
+        ScannerTokenType type = next().getType();
+        while (type.equals(PredefinedTokenType.T_MULTIPLY) || type.equals(PredefinedTokenType.T_DIVIDE) ||
+                type.equals(PredefinedTokenType.T_AND) || type.equals(PredefinedTokenType.T_MOD)) {
+            read(next());
+            procedurePrimary();
+            ASTTokenType astTokenType = Util.getASTTypeForPredefType((PredefinedTokenType) type);
+            buildTree(astTokenType, 2);
+            type = next().getType();
+        }
     }
 
     // Primary -> '-' Primary                       => "-"
@@ -366,17 +559,56 @@ public class Parser {
     // Primary -> 'pred' '(' Expression ')'         => "pred"
     // Primary -> 'chr' '(' Expression ')'          => "chr"
     // Primary -> -> 'ord' '(' Expression ')'       => "ord";
-    private static void procedurePrimary() {
-
+    private static void procedurePrimary() throws OutOfOrderTokenException, InvalidTokenTypeException {
+        ScannerTokenType type = next().getType();
+        if(type.equals(PredefinedTokenType.T_MINUS) || type.equals(PredefinedTokenType.T_NOT)) {
+            read(next());
+            procedurePrimary();
+            ASTTokenType astTokenType = Util.getASTTypeForPredefType((PredefinedTokenType) type);
+            buildTree(astTokenType, 1);
+        } else if(type.equals(PredefinedTokenType.T_PLUS)) {
+            read(next());
+            procedurePrimary();
+        }else if(type.equals(PredefinedTokenType.T_EOF)) {
+            read(next());
+            buildTree(ASTTokenType.EOF, 0);
+        } else if(type.equals(ValueTokenType.INTEGER) || type.equals(ValueTokenType.CHAR)) {
+            read(next());
+        } else if(type.equals(PredefinedTokenType.T_OPENBRAC)) {
+            read(next());
+            procedureExpression();
+            read(next(), PredefinedTokenType.T_CLOSEBRAC);
+        }else if(type.equals(PredefinedTokenType.T_SUCC) || type.equals(PredefinedTokenType.T_PRED) ||
+                type.equals(PredefinedTokenType.T_CHR) || type.equals(PredefinedTokenType.T_ORD)) {
+            read(next());
+            read(next(), PredefinedTokenType.T_OPENBRAC);
+            procedureExpression();
+            read(next(), PredefinedTokenType.T_CLOSEBRAC);
+            ASTTokenType astTokenType = Util.getASTTypeForPredefType((PredefinedTokenType) type);
+            buildTree(astTokenType, 1);
+        } else {
+            procedureName();
+            if(next().getType().equals(PredefinedTokenType.T_OPENBRAC)) {
+                read(next());
+                procedureExpression();
+                int n = 2;
+                while (next().getType().equals(PredefinedTokenType.T_COMMA)) {
+                    read(next());
+                    procedureExpression();
+                    n++;
+                }
+                read(next(), PredefinedTokenType.T_CLOSEBRAC);
+                buildTree(ASTTokenType.CALL, n);
+            }
+        }
     }
 
     // Name -> '<identifier>'
     private static void procedureName() throws OutOfOrderTokenException, InvalidTokenTypeException {
-        checkForOutOfOrderToken(next(), ValueTokenType.IDENTIFIER);
-        read(next());
+        read(next(), ValueTokenType.IDENTIFIER);
     }
 
-    public static void printAST(ASTNode head, int depth) {
+    private static void printAST(ASTNode head, int depth) {
         String indent = Util.buildRepeatedCharString('.', depth);
         ArrayList<ASTNode> children = head.getChildren();
         System.out.println(indent  + head.getToken().getValue() + "(" + children.size() + ")");
@@ -385,9 +617,14 @@ public class Parser {
         }
     }
 
+    public static void printAST() {
+        printAST(stack.peek(), 0);
+    }
+
     public static void parse(ArrayList<ScannerToken> tokens) throws OutOfOrderTokenException,
             InvalidTokenTypeException {
         Parser.tokens = tokens;
         procedureWinzig();
+        printAST();
     }
 }

@@ -48,8 +48,8 @@ public class ASTToken implements Token {
         typeValueMap.put(ASTTokenType.GT, ">");
         typeValueMap.put(ASTTokenType.EQUAL, "=");
         typeValueMap.put(ASTTokenType.NOTEQUAL, "<>");
-        typeValueMap.put(ASTTokenType.ADD, "+");
-        typeValueMap.put(ASTTokenType.SUBSTRACT, "-");
+        typeValueMap.put(ASTTokenType.PLUS, "+");
+        typeValueMap.put(ASTTokenType.MINUS, "-");
         typeValueMap.put(ASTTokenType.OR, "or");
         typeValueMap.put(ASTTokenType.MULTIPLY, "*");
         typeValueMap.put(ASTTokenType.DIVIDE, "/");

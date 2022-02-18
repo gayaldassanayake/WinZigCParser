@@ -121,15 +121,18 @@ public class Scanner {
 
     private static void readPredefinedToken() {
         HashMap<String, PredefinedTokenType> predefinedTokens = PredefinedTokenType.getPredefinedTokenValues();
-
+        String currentKey = null;
         for (String key: predefinedTokens.keySet()) {
             int tokenSize = key.length();
             if(readPointer+tokenSize<=program.length() &&
-                    program.substring(readPointer, readPointer+tokenSize).equals(key)) {
-                tokens.add(new ScannerToken(key, predefinedTokens.get(key)));
-                readPointer+=tokenSize;
-                break;
+                    program.substring(readPointer, readPointer+tokenSize).equals(key) &&
+                    (currentKey==null || currentKey.length()< tokenSize)) {
+                currentKey = key;
             }
+        }
+        if(currentKey!=null) {
+            tokens.add(new ScannerToken(currentKey, predefinedTokens.get(currentKey)));
+            readPointer+=currentKey.length();
         }
     }
 

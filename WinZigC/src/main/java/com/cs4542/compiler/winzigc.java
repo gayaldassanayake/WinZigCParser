@@ -13,7 +13,7 @@ import com.cs4542.compiler.util.Validator;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-public class Compiler {
+public class winzigc {
     public static void main(String[] args) {
         if(!Validator.validateArgs(args)) {
             return;

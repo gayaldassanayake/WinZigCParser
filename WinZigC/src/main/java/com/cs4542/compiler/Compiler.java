@@ -15,12 +15,12 @@ import java.util.ArrayList;
 
 public class Compiler {
     public static void main(String[] args) {
-        String arg = Validator.validateArgs(args);
-        if(Validator.help(arg) != 0) {
+        if(!Validator.validateArgs(args)) {
             return;
         }
+        String path = args[1];
         try {
-            String program = ProgramReader.readProgram(arg);
+            String program = ProgramReader.readProgram(path);
             ArrayList<ScannerToken> scannerTokens = Scanner.scan(program);
             ArrayList<ScannerToken> screenerTokens = Screener.screen(scannerTokens);
             Parser.parse(screenerTokens);

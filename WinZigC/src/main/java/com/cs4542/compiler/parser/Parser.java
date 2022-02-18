@@ -131,6 +131,7 @@ public class Parser {
     // Types ->                         => "types"
     private static void procedureTypes() throws OutOfOrderTokenException, InvalidTokenTypeException {
         if(next().getType().equals(PredefinedTokenType.T_TYPE)) {
+            read(next());
             int n =1;
             procedureType();
             read(next(), PredefinedTokenType.T_SEMICOLON);
@@ -344,14 +345,15 @@ public class Parser {
             read(next(), PredefinedTokenType.T_POOL);
             buildTree(ASTTokenType.LOOP, n);
         } else if(type.equals(PredefinedTokenType.T_CASE)) {
+            int n = 1;
             // case
             read(next());
             procedureExpression();
             read(next(), PredefinedTokenType.T_OF);
-            procedureCaseclauses();
-            procedureOtherwiseClause();
+            n += procedureCaseclauses();
+            n += procedureOtherwiseClause();
             read(next(), PredefinedTokenType.T_END);
-            buildTree(ASTTokenType.CASE, 3);
+            buildTree(ASTTokenType.CASE, n);
         } else if(type.equals(PredefinedTokenType.T_READ)) {
             // read
             int n = 1;
@@ -400,7 +402,8 @@ public class Parser {
     }
 
     // Caseclauses-> (Caseclause ';')+
-    private static void procedureCaseclauses() throws OutOfOrderTokenException, InvalidTokenTypeException {
+    private static int procedureCaseclauses() throws OutOfOrderTokenException, InvalidTokenTypeException {
+        int n = 1;
         procedureCaseclause();
         read(next(), PredefinedTokenType.T_SEMICOLON);
         ScannerTokenType type = next().getType();
@@ -409,7 +412,9 @@ public class Parser {
             procedureCaseclause();
             read(next(), PredefinedTokenType.T_SEMICOLON);
             type = next().getType();
+            n++;
         }
+        return n;
     }
 
     // Caseclause -> CaseExpression list ',' ':' Statement  => "case_clause"
@@ -439,12 +444,14 @@ public class Parser {
 
     // OtherwiseClause -> 'otherwise' Statement         => "otherwise"
     // OtherwiseClause ->
-    private static void procedureOtherwiseClause() throws InvalidTokenTypeException, OutOfOrderTokenException {
+    private static int procedureOtherwiseClause() throws InvalidTokenTypeException, OutOfOrderTokenException {
         if(next().getType().equals(PredefinedTokenType.T_OTHERWISE)) {
             read(next());
             procedureStatement();
             buildTree(ASTTokenType.OTHERWISE, 1);
+            return 1;
         }
+        return 0;
     }
 
     // Assignment -> Name ':=' Expression               => "assign"

@@ -1,10 +1,10 @@
-package com.cs4542.compiler.lex;
+package lex;
 
-import com.cs4542.compiler.token.ScannerToken;
-import com.cs4542.compiler.token.tokentype.ValueTokenType;
-import com.cs4542.compiler.token.tokentype.PredefinedTokenType;
-import com.cs4542.compiler.exception.InvalidTokenException;
-import com.cs4542.compiler.util.Util;
+import token.ScannerToken;
+import token.tokentype.ValueTokenType;
+import token.tokentype.PredefinedTokenType;
+import exception.InvalidTokenException;
+import util.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

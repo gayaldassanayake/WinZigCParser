@@ -1,4 +1,4 @@
-package com.cs4542.compiler.exception;
+package exception;
 
 public class InvalidTokenException extends Exception {
     public InvalidTokenException(String token) {

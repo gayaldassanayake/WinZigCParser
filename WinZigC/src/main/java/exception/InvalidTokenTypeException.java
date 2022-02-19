@@ -1,6 +1,6 @@
-package com.cs4542.compiler.exception;
+package exception;
 
-import com.cs4542.compiler.token.tokentype.TokenType;
+import token.tokentype.TokenType;
 
 public class InvalidTokenTypeException extends Exception {
     public InvalidTokenTypeException(TokenType type) {

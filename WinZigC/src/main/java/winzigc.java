@@ -1,14 +1,12 @@
-package com.cs4542.compiler;
-
-import com.cs4542.compiler.exception.InvalidTokenTypeException;
-import com.cs4542.compiler.exception.OutOfOrderTokenException;
-import com.cs4542.compiler.lex.Scanner;
-import com.cs4542.compiler.lex.Screener;
-import com.cs4542.compiler.parser.Parser;
-import com.cs4542.compiler.token.ScannerToken;
-import com.cs4542.compiler.exception.InvalidTokenException;
-import com.cs4542.compiler.util.ProgramReader;
-import com.cs4542.compiler.util.Validator;
+import exception.InvalidTokenTypeException;
+import exception.OutOfOrderTokenException;
+import lex.Scanner;
+import lex.Screener;
+import parser.Parser;
+import token.ScannerToken;
+import exception.InvalidTokenException;
+import util.ProgramReader;
+import util.Validator;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

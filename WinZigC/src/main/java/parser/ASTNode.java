@@ -1,6 +1,6 @@
-package com.cs4542.compiler.parser;
+package parser;
 
-import com.cs4542.compiler.token.Token;
+import token.Token;
 
 import java.util.ArrayList;
 

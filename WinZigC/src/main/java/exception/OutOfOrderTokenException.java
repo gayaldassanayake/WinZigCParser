@@ -1,6 +1,6 @@
-package com.cs4542.compiler.exception;
+package exception;
 
-import com.cs4542.compiler.token.ScannerToken;
+import token.ScannerToken;
 
 public class OutOfOrderTokenException extends Exception {
     public OutOfOrderTokenException(ScannerToken token) {

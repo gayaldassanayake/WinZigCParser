@@ -1,7 +1,7 @@
-package com.cs4542.compiler.token;
+package token;
 
-import com.cs4542.compiler.exception.InvalidTokenTypeException;
-import com.cs4542.compiler.token.tokentype.ASTTokenType;
+import exception.InvalidTokenTypeException;
+import token.tokentype.ASTTokenType;
 
 import java.util.HashMap;
 

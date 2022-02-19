@@ -1,4 +1,4 @@
-package com.cs4542.compiler.token.tokentype;
+package token.tokentype;
 
 import java.util.HashMap;
 

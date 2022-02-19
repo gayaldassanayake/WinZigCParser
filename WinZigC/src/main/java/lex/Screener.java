@@ -1,9 +1,9 @@
-package com.cs4542.compiler.lex;
+package lex;
 
-import com.cs4542.compiler.token.ScannerToken;
-import com.cs4542.compiler.token.tokentype.ValueTokenType;
-import com.cs4542.compiler.token.tokentype.TokenType;
-import com.cs4542.compiler.util.Util;
+import token.ScannerToken;
+import token.tokentype.ValueTokenType;
+import token.tokentype.TokenType;
+import util.Util;
 
 import java.util.ArrayList;
 

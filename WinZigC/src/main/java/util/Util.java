@@ -1,9 +1,9 @@
-package com.cs4542.compiler.util;
+package util;
 
-import com.cs4542.compiler.exception.InvalidTokenTypeException;
-import com.cs4542.compiler.token.ScannerToken;
-import com.cs4542.compiler.token.tokentype.ASTTokenType;
-import com.cs4542.compiler.token.tokentype.PredefinedTokenType;
+import exception.InvalidTokenTypeException;
+import token.ScannerToken;
+import token.tokentype.ASTTokenType;
+import token.tokentype.PredefinedTokenType;
 
 import java.io.FileWriter;
 import java.io.IOException;

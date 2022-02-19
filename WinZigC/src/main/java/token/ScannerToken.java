@@ -1,6 +1,6 @@
-package com.cs4542.compiler.token;
+package token;
 
-import com.cs4542.compiler.token.tokentype.ScannerTokenType;
+import token.tokentype.ScannerTokenType;
 
 public class ScannerToken implements Token {
     private final String value;

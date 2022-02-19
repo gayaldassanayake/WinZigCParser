@@ -1,15 +1,15 @@
-package com.cs4542.compiler.parser;
+package parser;
 
-import com.cs4542.compiler.exception.InvalidTokenTypeException;
-import com.cs4542.compiler.exception.OutOfOrderTokenException;
-import com.cs4542.compiler.token.ASTToken;
-import com.cs4542.compiler.token.BasicToken;
-import com.cs4542.compiler.token.ScannerToken;
-import com.cs4542.compiler.token.tokentype.ASTTokenType;
-import com.cs4542.compiler.token.tokentype.ValueTokenType;
-import com.cs4542.compiler.token.tokentype.PredefinedTokenType;
-import com.cs4542.compiler.token.tokentype.ScannerTokenType;
-import com.cs4542.compiler.util.Util;
+import exception.InvalidTokenTypeException;
+import exception.OutOfOrderTokenException;
+import token.ASTToken;
+import token.BasicToken;
+import token.ScannerToken;
+import token.tokentype.ASTTokenType;
+import token.tokentype.ValueTokenType;
+import token.tokentype.PredefinedTokenType;
+import token.tokentype.ScannerTokenType;
+import util.Util;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,16 +17,6 @@ import java.util.Set;
 import java.util.Stack;
 
 public class Parser {
-    /**
-     * TODO
-     * 1. Define build tree function
-     * 2. Define read_token function
-     * 3. Complete procedure for grammar rules of one non terminal
-     * 4. Complete all the procedures
-     * 5. Print output in the desired manner
-     * 6. Test for all 15 examples
-     * 7. (Optional) create automated github test action
-     */
     private static ArrayList<ScannerToken> tokens;
     private static final Stack<ASTNode> stack = new Stack<>();
     private static int readPointer =0;

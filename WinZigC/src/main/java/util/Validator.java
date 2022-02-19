@@ -1,4 +1,4 @@
-package com.cs4542.compiler.util;
+package util;
 
 public class Validator {
     public static boolean validateArgs(String[] args) throws IllegalArgumentException {

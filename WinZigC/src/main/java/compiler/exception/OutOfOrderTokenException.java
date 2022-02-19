@@ -1,6 +1,6 @@
-package exception;
+package compiler.exception;
 
-import token.ScannerToken;
+import compiler.token.ScannerToken;
 
 public class OutOfOrderTokenException extends Exception {
     public OutOfOrderTokenException(ScannerToken token) {

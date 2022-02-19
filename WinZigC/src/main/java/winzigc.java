@@ -1,12 +1,12 @@
-import exception.InvalidTokenTypeException;
-import exception.OutOfOrderTokenException;
-import lex.Scanner;
-import lex.Screener;
-import parser.Parser;
-import token.ScannerToken;
-import exception.InvalidTokenException;
-import util.ProgramReader;
-import util.Validator;
+import compiler.exception.InvalidTokenTypeException;
+import compiler.exception.OutOfOrderTokenException;
+import compiler.lex.Scanner;
+import compiler.lex.Screener;
+import compiler.parser.Parser;
+import compiler.token.ScannerToken;
+import compiler.exception.InvalidTokenException;
+import compiler.util.ProgramReader;
+import compiler.util.Validator;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

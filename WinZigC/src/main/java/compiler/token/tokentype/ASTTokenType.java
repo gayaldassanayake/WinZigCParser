@@ -1,4 +1,4 @@
-package token.tokentype;
+package compiler.token.tokentype;
 
 public enum ASTTokenType implements TokenType {
     PROGRAM,

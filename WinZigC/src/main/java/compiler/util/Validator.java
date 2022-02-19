@@ -1,4 +1,4 @@
-package util;
+package compiler.util;
 
 public class Validator {
     public static boolean validateArgs(String[] args) throws IllegalArgumentException {
@@ -13,7 +13,7 @@ public class Validator {
     }
 
     public static void help() {
-        System.out.println("WinZigC lexical analyzer and parser:");
+        System.out.println("WinZigC lexical analyzer and compiler.parser:");
         System.out.println("    -h [--help]     show help message");
         System.out.println("    -ast arg        produce AST for the program");
         System.out.println("Example execution 1:");

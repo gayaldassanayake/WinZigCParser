@@ -1,6 +1,6 @@
-package token;
+package compiler.token;
 
-import token.tokentype.ScannerTokenType;
+import compiler.token.tokentype.ScannerTokenType;
 
 public class ScannerToken implements Token {
     private final String value;

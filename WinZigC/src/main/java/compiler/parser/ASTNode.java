@@ -1,6 +1,6 @@
-package parser;
+package compiler.parser;
 
-import token.Token;
+import compiler.token.Token;
 
 import java.util.ArrayList;
 

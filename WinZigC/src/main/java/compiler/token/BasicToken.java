@@ -1,7 +1,7 @@
-package token;
+package compiler.token;
 
-import exception.InvalidTokenTypeException;
-import token.tokentype.ValueTokenType;
+import compiler.exception.InvalidTokenTypeException;
+import compiler.token.tokentype.ValueTokenType;
 
 import java.util.HashMap;
 

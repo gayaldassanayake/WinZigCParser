@@ -31,5 +31,4 @@ default: classes
 classes: $(CLASSES:.java=.class)
 
 clean:
-	$(RM) *.class
-	#find . -name "*.class" -type f -delete
+	find . -name "*.class" -type f -delete

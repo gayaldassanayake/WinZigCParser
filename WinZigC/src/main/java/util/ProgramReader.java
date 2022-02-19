@@ -1,4 +1,4 @@
-package com.cs4542.compiler.util;
+package util;
 
 import java.io.File;
 import java.io.FileNotFoundException;

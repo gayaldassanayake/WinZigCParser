@@ -28,4 +28,4 @@ hs_err_pid*
 # output files
 scanner-tokens.txt
 screener-tokens.txt
-tree.01
+tree.*

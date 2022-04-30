@@ -1,12 +1,14 @@
 package compiler.util;
 
 public class Validator {
-    public static boolean validateArgs(String[] args) throws IllegalArgumentException {
+    public static ProgramMode validateArgs(String[] args) throws IllegalArgumentException {
         if(args.length==1 && (args[0].equals("--help") || args[0].equals("-h"))) {
             help();
-            return false;
+            return ProgramMode.HELP;
         } else if(args.length==2 && args[0].equals("-ast")) {
-            return true;
+            return ProgramMode.AST;
+        } else if(args.length==2 && args[0].equals("-code")) {
+            return ProgramMode.CODE;
         } else {
             throw new IllegalArgumentException("Only one or two arguments allowed");
         }

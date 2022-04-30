@@ -1,7 +1,7 @@
-package token;
+package compiler.token;
 
 
-import token.tokentype.TokenType;
+import compiler.token.tokentype.TokenType;
 
 public interface Token {
     String getValue();

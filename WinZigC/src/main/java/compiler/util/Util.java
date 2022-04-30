@@ -1,9 +1,9 @@
-package util;
+package compiler.util;
 
-import exception.InvalidTokenTypeException;
-import token.ScannerToken;
-import token.tokentype.ASTTokenType;
-import token.tokentype.PredefinedTokenType;
+import compiler.exception.InvalidTokenTypeException;
+import compiler.token.ScannerToken;
+import compiler.token.tokentype.ASTTokenType;
+import compiler.token.tokentype.PredefinedTokenType;
 
 import java.io.FileWriter;
 import java.io.IOException;

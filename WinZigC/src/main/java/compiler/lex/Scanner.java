@@ -1,10 +1,10 @@
-package lex;
+package compiler.lex;
 
-import token.ScannerToken;
-import token.tokentype.ValueTokenType;
-import token.tokentype.PredefinedTokenType;
-import exception.InvalidTokenException;
-import util.Util;
+import compiler.token.ScannerToken;
+import compiler.token.tokentype.ValueTokenType;
+import compiler.token.tokentype.PredefinedTokenType;
+import compiler.exception.InvalidTokenException;
+import compiler.util.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -166,7 +166,7 @@ public class Scanner {
                 }
             }
         }
-        Util.dumpTokens(tokens, "scanner-tokens.txt");
+        Util.dumpTokens(tokens, "scanner-tokens-out.txt");
         return tokens;
     }
 }

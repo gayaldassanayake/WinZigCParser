@@ -26,6 +26,6 @@ hs_err_pid*
 .idea/
 
 # output files
-scanner-tokens.txt
-screener-tokens.txt
+scanner-tokens-out.txt
+screener-tokens-out.txt
 tree.*

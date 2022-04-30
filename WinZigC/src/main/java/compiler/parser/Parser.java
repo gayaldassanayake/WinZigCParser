@@ -1,15 +1,17 @@
-package parser;
+package compiler.parser;
 
-import exception.InvalidTokenTypeException;
-import exception.OutOfOrderTokenException;
-import token.ASTToken;
-import token.BasicToken;
-import token.ScannerToken;
-import token.tokentype.ASTTokenType;
-import token.tokentype.ValueTokenType;
-import token.tokentype.PredefinedTokenType;
-import token.tokentype.ScannerTokenType;
-import util.Util;
+import compiler.exception.InvalidTokenTypeException;
+import compiler.exception.OutOfOrderTokenException;
+import compiler.token.ASTNode;
+import compiler.token.ASTToken;
+import compiler.token.BasicToken;
+import compiler.token.ScannerToken;
+import compiler.token.tokentype.ASTTokenType;
+import compiler.token.tokentype.ValueTokenType;
+import compiler.token.tokentype.PredefinedTokenType;
+import compiler.token.tokentype.ScannerTokenType;
+import compiler.util.ProgramMode;
+import compiler.util.Util;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -622,10 +624,13 @@ public class Parser {
         printAST(stack.peek(), 0);
     }
 
-    public static void parse(ArrayList<ScannerToken> tokens) throws OutOfOrderTokenException,
+    public static ASTNode parse(ArrayList<ScannerToken> tokens, ProgramMode mode) throws OutOfOrderTokenException,
             InvalidTokenTypeException {
         Parser.tokens = tokens;
         procedureWinzig();
-        printAST();
+        if(mode.equals(ProgramMode.AST)) {
+            printAST();
+        }
+        return stack.peek();
     }
 }

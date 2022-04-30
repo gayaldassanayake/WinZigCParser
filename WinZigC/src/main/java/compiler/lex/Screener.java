@@ -1,9 +1,9 @@
-package lex;
+package compiler.lex;
 
-import token.ScannerToken;
-import token.tokentype.ValueTokenType;
-import token.tokentype.TokenType;
-import util.Util;
+import compiler.token.ScannerToken;
+import compiler.token.tokentype.ValueTokenType;
+import compiler.token.tokentype.TokenType;
+import compiler.util.Util;
 
 import java.util.ArrayList;
 
@@ -18,7 +18,7 @@ public class Screener {
                 processedTokens.add(token);
             }
         }
-        Util.dumpTokens(processedTokens, "screener-tokens.txt");
+        Util.dumpTokens(processedTokens, "screener-tokens-out.txt");
         return processedTokens;
     }
 }

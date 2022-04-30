@@ -197,6 +197,42 @@ public class Evaluator {
         node.setSynthesizedCollection(new AttributeCollection(next, top, type));
     }
 
+    private static void evaluateBEQ(ASTNode node, Environment env) {
+        ASTNode firstChild = node.getChildren().get(0);
+        evaluateFirstChildDefault(firstChild, env);
+
+        ASTNode secondChild = node.getChildren().get(1);
+        evaluateOtherChildDefault(secondChild, firstChild, env);
+
+        Integer right = memory.pop();
+        Integer left = memory.pop();
+        memory.push(left.equals(right)? 1:0);
+
+        code.add("BEQ BDIV");
+        int next = secondChild.getSynthesizedCollection().getNext() + 1;
+        int top = secondChild.getSynthesizedCollection().getTop() - 1;
+        DataType type = DataType.INTEGER;
+        node.setSynthesizedCollection(new AttributeCollection(next, top, type));
+    }
+
+    private static void evaluateBNE(ASTNode node, Environment env) {
+        ASTNode firstChild = node.getChildren().get(0);
+        evaluateFirstChildDefault(firstChild, env);
+
+        ASTNode secondChild = node.getChildren().get(1);
+        evaluateOtherChildDefault(secondChild, firstChild, env);
+
+        Integer right = memory.pop();
+        Integer left = memory.pop();
+        memory.push(!left.equals(right)? 1:0);
+
+        code.add("BNE BDIV");
+        int next = secondChild.getSynthesizedCollection().getNext() + 1;
+        int top = secondChild.getSynthesizedCollection().getTop() - 1;
+        DataType type = DataType.INTEGER;
+        node.setSynthesizedCollection(new AttributeCollection(next, top, type));
+    }
+
     private static void evaluateBAND(ASTNode node, Environment env) {
         ASTNode firstChild = node.getChildren().get(0);
         evaluateFirstChildDefault(firstChild, env);
@@ -432,6 +468,10 @@ public class Evaluator {
             evaluateBAND(node, env);
         } else if(tokenType.equals(ASTTokenType.OR)) {
             evaluateBOR(node, env);
+        } else if(tokenType.equals(ASTTokenType.EQUAL)) {
+            evaluateBEQ(node, env);
+        } else if(tokenType.equals(ASTTokenType.NOTEQUAL)) {
+            evaluateBNE(node, env);
         } else if(tokenType.equals(ASTTokenType.NOT)) {
             evaluateUNOT(node, env);
         } else if(tokenType.equals(ASTTokenType.LTE)) {

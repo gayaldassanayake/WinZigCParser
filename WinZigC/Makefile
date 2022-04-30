@@ -19,11 +19,17 @@ CLASSES = \
 	src/main/java/compiler/token/BasicToken.java \
 	src/main/java/compiler/util/Util.java \
 	src/main/java/compiler/util/ProgramReader.java \
+    src/main/java/compiler/util/ProgramMode.java \
 	src/main/java/compiler/util/Validator.java \
 	src/main/java/compiler/lex/Scanner.java \
 	src/main/java/compiler/lex/Screener.java \
-	src/main/java/compiler/parser/ASTNode.java \
+    src/main/java/compiler/evaluator/DataType.java \
+	src/main/java/compiler/evaluator/AttributeCollection.java \
+    src/main/java/compiler/token/ASTNode.java \
 	src/main/java/compiler/parser/Parser.java \
+	src/main/java/compiler/evaluator/Environment.java \
+	src/main/java/compiler/evaluator/ErrorAttribute.java \
+	src/main/java/compiler/evaluator/Evaluator.java \
 	src/main/java/winzigc.java
 
 default: classes
